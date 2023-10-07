@@ -39,7 +39,7 @@ while True:
             cx = cx + dx
             cy = cy + dy
             carre(cx, cy, taille)
-        elif nom_touche =="Esc":
+        elif nom_touche =="Escape":
             ferme_fenetre()
     mise_a_jour()
 ferme_fenetre()
