@@ -8,13 +8,23 @@ if __name__ == "__main__":
 
 
     # TODO Style de la fenêtre 
+    
+    # Création de la fenêtre
+    lFenetre = 600
+    hFenetre = 600
 
-    cree_fenetre(500, 500)
-    rectangle(0, 0, 500, 500, 'black', 'black', tag="background")
-    rectangle(10, 70, 490, 490, 'white', tag='circuit')
+    cree_fenetre(lFenetre, hFenetre)
+    rectangle(0, 0, lFenetre, hFenetre, 'black', 'black', tag="background")
 
+    # Initialisation du circuit
+    espace__autour_circuit = 15
+    circuitX1 = espace__autour_circuit
+    circuitX2 = lFenetre - espace__autour_circuit
+    circuitY1 = 90
+    circuitY2 = hFenetre - espace__autour_circuit
 
-
+    rectangle(circuitX1, circuitY1, circuitX2, circuitY2, 'white', tag='circuit')
+    
     
 
     # TODO Déplacements du joueur
