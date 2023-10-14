@@ -1,8 +1,11 @@
 from fltk import *
-
+from random import*
+# Fonction
 def dessin_carre(x, y, cote):
     rectangle(x, y, x + cote, y + cote,
                "red", "red", tag='carre')
+def qix(x,y):
+    image(x,y,'kong.png',largeur=60,hauteur=60,ancrage="center")
 
 if __name__ == "__main__":
 
@@ -13,14 +16,33 @@ if __name__ == "__main__":
     rectangle(0, 0, 500, 500, 'black', 'black', tag="background")
     rectangle(10, 70, 490, 490, 'white', tag='circuit')
 
+    chaineQix="Quix"
+    tailleQix = 20
+    policeQix ="Courier"
+    texte(35,50,chaineQix,police=policeQix,taille=tailleQix,couleur="blue",ancrage="center")#Ecrit quix au dessus du carré
 
-
-    
+    chaineSurface="Surface"
+    tailleSurface=15
+    policeTaile='Courier'
+    texte(250,10,chaineSurface,police=policeTaile,taille=tailleSurface,couleur='red',ancrage="center")
 
     # TODO Déplacements du joueur
 
     # TODO Les adversaires et leurs déplacements
+    mov=0
+    x=250
+    y=250
+    while mov ==0:
+        qix(x,y)
+        mouvx=x-5
+        mouvy=y-5
+        if x==250 and y==250:
+            x=(randrange(x,mouvx,-5))
+            y=(randrange(y,mouvy,-5))
+            efface(qix)
+            qix(x,y)
 
+    
     # TODO Les vies du joueur 
 
     # TODO Niveaux et vitesses qui augmentent 
