@@ -37,16 +37,18 @@ if __name__ == "__main__":
     
     # TODO Déplacements du joueur et fonctions de jeu
 
-    vitesse = 0.03
+    vitesse = 0.04
     orientation = None
     dep = 5
     dx = 0 
     dy = 0
     entree = 0
+    old_orientation = None
 
     # Segments que le joueur dessine, qui deviennent des chemins possibles (segments du circuit initiaux + segments tracés)
     segments_totaux = segments_initiaux(circuitX1, circuitX2, circuitY1, circuitY2)
-    segments_trace = []
+    segments_traces = 0
+    coordonnee_poly = []
 
 
     while True:
@@ -64,18 +66,22 @@ if __name__ == "__main__":
 
             # Touche 'flèche gauche' pressée
             if nom_touche == 'Left':
+                old_orientation = orientation
                 orientation = 180
 
             # Touche 'flèche droite' pressée
             elif nom_touche == 'Right':
+                old_orientation = orientation
                 orientation = 0
 
             # Touche 'flèche bas' pressée
             elif nom_touche == 'Down':
+                old_orientation = orientation
                 orientation = 270
 
             # Touche 'flèche haut' pressée
             elif nom_touche == 'Up':
+                old_orientation = orientation
                 orientation = 90
 
             # Touche 'échap' pressée
@@ -89,51 +95,54 @@ if __name__ == "__main__":
 
             if entree == 1:
 
-                # Trouvez les segments proches de la position actuelle du joueur
-                segments_proches = []
-                for element in segments_totaux:
-                    x1_segment, y1_segment = element[0]
-                    x2_segment, y2_segment = element[1]
-
-                    if point_dans_segment(x1_segment, y1_segment, x2_segment, y2_segment, joueurX, joueurY):
-                        segments_proches.append(i)
-
-                if segments_proches:
-                    # Sélectionnez un segment proche 
-                    segmentProche = segments_proches[0]
-                    x1, y1 = segmentProche[0]
-                    x2, y2 = segmentProche[1]
-
-                    # Déterminez les directions libres à partir de la position actuelle du joueur
-                    dirs_libres = directions_libres(joueurX, joueurY, segments_totaux)
-                    print(dirs_libres, 'direction libre')
-
-                    # Choisir l'une des directions libres 
-                    nouvelle_orientation = dirs_libres[0] ### réfléchir sur la façon du choix de l'orientation 
-
-                    # Mettez à jour l'orientation du joueur
-                    orientation = nouvelle_orientation
-                
                 # Déplacement en fonction de l'orientation du joueur
                 new_orientation = orientation_dep(orientation, dep, espace_autour_circuit, lFenetre, hFenetre, circuitY1, joueurX, joueurY, dx, dy)
+
+                # si changement de trajectoire, prendre les coordonnées du joueur pour calculer son polygone
+                if orientation != old_orientation:
+
+                    # enregistrer chaque coin du polygone
+                    coordonnee_poly.append([joueurX, joueurY])
+                    old_orientation = orientation
+
                 dx = new_orientation[0]
                 dy = new_orientation[1]
 
                 # Prépare les nouvelles coordonnées afin de vérifier si le joueur peut se déplacer sans sortir du circuit
-                nouveauX = joueurX + dx
+                nouveauX = joueurX + dx 
                 nouveauY = joueurY + dy
-                print(dx, dy)
 
                 if ((circuitX1 <= nouveauX <= circuitX2) and (circuitY1 <= nouveauY <= circuitY2)):
                     efface('joueur')
+                    # tracé les lignes des futures polygones 
+                    ligne(joueurX, joueurY, nouveauX, nouveauY, couleur='white', tag='segment_tracé')
+
                     joueurX += dx
                     joueurY += dy
                     joueur = cercle(joueurX, joueurY, tailleJoueur, 'yellow', '', 2, tag='joueur')
-                    sleep(vitesse) ### gérer la vitesse qui sacade 
 
+                sleep(0.05) ### gérer la vitesse qui sacade 
+
+                # si le joueur revient sur le circuit
                 if point_dans_segment(x1, y1, x2, y2, nouveauX, nouveauY):
+
+                    # sortir de la boucle de la touche 'entrée' et du dessin 
                     entree = 0
-                    break ### gérer les fin de boucles pour revenir sur le circuit depuis tous les côtés
+                    # prendre les coordonnées du point final (celui qui revient sur le circuit)
+                    coordonnee_poly.append([joueurX, joueurY])
+
+                    # formation de tuple des segments tracés, qui deviennent des chemins possibles
+                    segments_traces = segment_par_coordonnee(coordonnee_poly)
+                    for i in segments_traces:
+                        segments_totaux.append(i)
+
+                    # tracé le polygone 
+                    polygone(coordonnee_poly, 'white', 'green', tag='polygone')
+
+                    coordonnee_poly = []
+                    break 
+
+                
             
             # Déplacement en fonction de l'orientation du joueur
             new_orientation = orientation_dep(orientation, dep, espace_autour_circuit, lFenetre, hFenetre, circuitY1, joueurX, joueurY, dx, dy)
@@ -141,15 +150,15 @@ if __name__ == "__main__":
             dy = new_orientation[1]
 
             # Prépare les nouvelles coordonnées afin de vérifier si le joueur peut se déplacer sans sortir du circuit
-            nouveauX = joueurX + dx
-            nouveauY = joueurY + dy
+            nouveauX = joueurX + dx 
+            nouveauY = joueurY + dy 
 
             if point_dans_segment(x1, y1, x2, y2, joueurX, joueurY) and point_dans_segment(x1, y1, x2, y2, nouveauX, nouveauY):
                 efface('joueur')
-                joueurX += dx
-                joueurY += dy
+                joueurX += dx 
+                joueurY += dy 
                 joueur = cercle(joueurX, joueurY, tailleJoueur, 'yellow', '', 2, tag='joueur')
-                sleep(vitesse)
+        sleep(vitesse)
 
 
 
