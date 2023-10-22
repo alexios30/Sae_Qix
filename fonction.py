@@ -13,20 +13,38 @@ def segments_initiaux(
     :param float y2: ordonnée du coin inférieur gauche du circuit
     :return: liste contenant les segments du circuit sous forme ``((x1, y1),(x2,y2))``
     """
-    # Segment supérieur
+
     liste_total = []
-    lst = (x1, y1),(x2, y1)
-    liste_total.append(lst)
-    # Segment gauche
-    lst = (x1, y1),(x1, y2)
-    liste_total.append(lst)
     # Segment inférieur
     lst = (x1, y2),(x2, y2)
     liste_total.append(lst)
     # Segment droit
     lst = (x2, y1),(x2, y2)
     liste_total.append(lst)
+    # Segment supérieur
+    lst = (x1, y1),(x2, y1)
+    liste_total.append(lst)
+    # Segment gauche
+    lst = (x1, y1),(x1, y2)
+    liste_total.append(lst)
     return liste_total
+
+
+def segment_par_coordonnee(
+        lst: list[list]
+) -> list:
+    """
+    Regroupe les coordonnées des changements d'orientation pour en faire des tuples de segments.
+    :param list lst: liste des coordonnées de changement de direction
+    :return: liste de tuples ``((x1, y1),(x2,y2))`` pour en faire des segments
+    """
+
+    liste_total = []
+    for i in range(len(lst) -1):
+        segment = (tuple(lst[i]), tuple(lst[i+1]))
+        liste_total.append(segment)
+    return liste_total
+
 
 def point_dans_segment(
         x1: float,
@@ -48,7 +66,6 @@ def point_dans_segment(
     :return: True si le point appartient au segment - False sinon
     """
 
-
     if x1 == x2 and x1 == px:
         # Le point est sur le segment vertical
         return y1 <= py <= y2 or y2 <= py <= y1
@@ -60,6 +77,7 @@ def point_dans_segment(
         b = y1 - m * x1
         y_expected = m * px + b
         return y_expected == py and min(x1, x2) <= px <= max(x1, x2)
+
 
 def directions_libres(
         x: float, 
@@ -96,6 +114,7 @@ def directions_libres(
         directions.append(0)
 
     return directions
+
 
 def orientation_dep(
         orientation: float,
