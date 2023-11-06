@@ -1,6 +1,7 @@
 from random import *
 from fltk import *
 from math import *
+
 def segments_initiaux(
         x1: float,
         x2: float,
@@ -164,9 +165,17 @@ def orientation_dep_sparx(
         dy = max(-dep, -(sparx_Y - circuitY1))
     return dx, dy
 
+
 def orientation_dispo(
         orientation: float,
 ) -> list:
+    """
+    Permet de renvoyer les orientations en excluant le demi-tour.
+
+    :param float orientation: orientation du sparx
+
+    :return: Liste d'orientations.
+    """
     
     orientations = [orientation]
     
@@ -182,7 +191,17 @@ def orientation_dispo(
     return orientations
 
 
-def deplacement_qix(x_qix, y_qix, vitesse_qix, circuitX1, circuitX2, circuitY1, circuitY2, milieu_qix):
+def deplacement_qix(
+        x_qix: float, 
+        y_qix: float, 
+        vitesse_qix: float, 
+        circuitX1: float, 
+        circuitX2: float, 
+        circuitY1: float, 
+        circuitY2: float, 
+        milieu_qix: float,
+) -> tuple[int, int]:
+
     """
     Effectue un déplacement aléatoire du Qix en tenant compte des limites du circuit.
     :param x_qix: Coordonnée x du Qix.
@@ -197,7 +216,7 @@ def deplacement_qix(x_qix, y_qix, vitesse_qix, circuitX1, circuitX2, circuitY1, 
     :return: Nouvelles coordonnées du Qix (x_qix, y_qix).
     """
     facteur = 2.0
-    plage_deplacement = vitesse_qix * facteur
+    plage_deplacement = vitesse_qix  * facteur
 
     if y_qix <= circuitY1 + milieu_qix:
         x_qix = randint(x_qix - plage_deplacement, x_qix + plage_deplacement)
@@ -222,16 +241,18 @@ def deplacement_qix(x_qix, y_qix, vitesse_qix, circuitX1, circuitX2, circuitY1, 
 
 
 def qix(
-        x_qix:float,
-        y_qix:float,
-)->float:
+        x_qix: float,
+        y_qix: float,
+)-> float:
     """
     Cela prends les coordonnés du qix et renvoie l'image du qix avec ses nouvelle coordonnées
     :param float x_qix= Où se situe les coordonnés en x du qix
     :param float y_qix= Où se situe les coordonnés en y du qix
     """
+    
     image(x_qix,y_qix,'kong.png',largeur=60,hauteur=60,ancrage="center",tag='kong')
     return image
+
 
 def distance(x1, y1, x2, y2):
     """
@@ -289,4 +310,39 @@ def nombre_vie(
         policeQix ="STENCIL"
         texte(300,300,chaineQix,police=policeQix,taille=tailleQix,couleur="purple",ancrage="center",tag="game over")
         return True
+    return False
+
+
+def intersection_lignes_presentes(
+        lignes: list,
+) -> bool:
+    """
+    Vérifie si les lignes que dessine le joueur s'intersectent.
+
+    :param list lignes: liste des lignes de dessins actuel
+    :return: True s'il y a une intersection, False sinon
+
+    """
+
+    for i in range(len(lignes) - 1):
+        ligne1 = lignes[i]
+        for j in range(i + 1, len(lignes)):
+            ligne2 = lignes[j]
+
+            x1, y1 = ligne1[0]
+            x2, y2 = ligne1[1]
+            x3, y3 = ligne2[0]
+            x4, y4 = ligne2[1]
+
+            det = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
+
+            if det == 0:
+                continue
+
+            intersection_x = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / det
+            intersection_y = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / det
+
+            if min(x1, x2) <= intersection_x <= max(x1, x2) and min(y1, y2) <= intersection_y <= max(y1, y2) and min(x3, x4) <= intersection_x <= max(x3, x4) and min(y3, y4) <= intersection_y <= max(y3, y4):
+                return True
+
     return False
