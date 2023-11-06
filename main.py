@@ -24,25 +24,8 @@ if __name__ == "__main__":
     circuitY2 = hFenetre - espace_autour_circuit
 
     rectangle(circuitX1, circuitY1, circuitX2, circuitY2, 'white', tag='circuit')
-    
-    #Ecriture de qix
-    chaineQix="Qix"
-    tailleQix = 30
-    policeQix ="Stencil"
-    texte(40,30,chaineQix,police=policeQix,taille=tailleQix,couleur="blue",ancrage="center")
 
-    #Ecriture de vie restante
-    chaineQix="Vie Restante: "
-    tailleQix = 15
-    policeQix ="Courier"
-    texte(490,30,chaineQix,police=policeQix,taille=tailleQix,couleur="red",ancrage="center")
 
-    #Ecriture de 3
-    chaineQix="3"
-    tailleQix = 15
-    policeQix ="Courier"
-    texte(570,30,chaineQix,police=policeQix,taille=tailleQix,couleur="red",ancrage="center",tag='vie')
-    
     # TODO Création du joueur
 
     # Dimensions du joueur
@@ -79,7 +62,7 @@ if __name__ == "__main__":
     x_qix=300
     y_qix=300
     #Vitesse Qix
-    vitesse_qix=4
+    vitesse_qix=10
     #Milieu du Qix
     milieu_qix=30
     qix(x_qix, y_qix)
@@ -94,12 +77,12 @@ if __name__ == "__main__":
     dyj = 0
     entree = 0
     old_orientation_j = None
-    depart = 0
 
     # Segments que le joueur dessine, qui deviennent des chemins possibles (segments du circuit initiaux + segments tracés)
     segments_totaux = segments_initiaux(circuitX1, circuitX2, circuitY1, circuitY2)
     segments_traces = 0
     coordonnee_poly = []
+    liste_lignes = []
 
 
     while True:
@@ -146,10 +129,6 @@ if __name__ == "__main__":
 
             if entree == 1: 
 
-                # if depart == 0:
-                #     x_depart, y_depart = i
-                #     depart += 1
-
                 # Déplacement en fonction de l'orientation du joueur
                 new_orientation_j = orientation_dep_joueur(orientation_j, dep, espace_autour_circuit, lFenetre, hFenetre, circuitY1, joueurX, joueurY)
 
@@ -159,12 +138,10 @@ if __name__ == "__main__":
                     # enregistrer chaque coin du polygone
                     coordonnee_poly.append([joueurX, joueurY])
                     old_orientation_j = orientation_j
-                    
-                    # # formation de tuple des segments tracés, qui deviennt des chemins possibles
-                    # segments_traces = segment_par_coordonnee(coordonnee_poly)
-                    # for i in segments_traces:
-                    #     segments_totaux.append(i)
-                    # segment_totaux = segment_sans_doublons(segments_totaux)
+                    try:
+                        liste_lignes.pop(-1)
+                    except:
+                        pass    
 
                 dxj = new_orientation_j[0]
                 dyj = new_orientation_j[1]
@@ -174,6 +151,7 @@ if __name__ == "__main__":
                 nouveauY_j = joueurY + dyj
 
                 if ((circuitX1 <= nouveauX_j <= circuitX2) and (circuitY1 <= nouveauY_j <= circuitY2)):
+
                     if collision_qix(x_qix, y_qix, joueurX, joueurY, tailleJoueur):
                         efface('segment_tracé')
                         orientation_j = None
@@ -197,9 +175,37 @@ if __name__ == "__main__":
                         vie_joueur-=1
                         if nombre_vie(vie_joueur):
                             break
+
+
                     efface('joueur')
                     # tracé les lignes des futures polygones 
                     ligne(joueurX, joueurY, nouveauX_j, nouveauY_j, couleur='white', tag='segment_tracé')
+                    liste_lignes.append(tuple(((joueurX, joueurY),(nouveauX_j, nouveauY_j))))
+
+                    ####### CONDITION DU QIX SUR LES LIGNES #######
+
+                    if intersection_lignes_presentes(liste_lignes):
+                        print("Perdu")
+                        liste_lignes = []
+                        # Remettre le joueur au point de départ
+                        efface('joueur')
+                        joueurX = lFenetre // 2
+                        joueurY = circuitY2
+                        orientation_j = None
+                        cercle(joueurX, joueurY, tailleJoueur, 'yellow', '', 2, tag='joueur')
+                        # Efface le tracé actuel (qui se coupe donc)
+                        efface('segment_tracé')
+                        #Enlève une vie 
+                        efface('vie')
+                        vie_joueur-=1
+                        if nombre_vie(vie_joueur):
+                            break
+                        # sortir de la boucle entrée car le joueur revient sur le circuit
+                        entree = 0
+                        break
+
+                    if nombre_vie(vie_joueur):
+                        break
 
                     joueurX += dxj
                     joueurY += dyj
@@ -212,10 +218,10 @@ if __name__ == "__main__":
 
                     # sortir de la boucle de la touche 'entrée' et du dessin 
                     entree = 0
-                    # prendre les coordonnées du point final (celui qui revient sur le circuit)
+                    # prendre les coordonnées du point final (celui qui se trouve sur le circuit)
                     coordonnee_poly.append([joueurX, joueurY])
 
-                    # formation de tuple des segments tracés, qui deviennt des chemins possibles
+                    # formation de tuples des segments tracés, qui deviennt des chemins possibles
                     segments_traces = segment_par_coordonnee(coordonnee_poly)
                     for i in segments_traces:
                         segments_totaux.append(i)
@@ -224,12 +230,10 @@ if __name__ == "__main__":
                     # tracé le polygone en vérifiant si des coins du circuit sont à rajouter                    
                     polygone(coordonnee_poly, 'white', 'green', tag='polygone')
 
-
                     coordonnee_poly = []
-                    sortie = 0
                     break 
 
-        
+            
             # Déplacement en fonction de l'orientation du joueur
             new_orientation_j = orientation_dep_joueur(orientation_j, dep, espace_autour_circuit, lFenetre, hFenetre, circuitY1, joueurX, joueurY)
             dxj = new_orientation_j[0]
@@ -238,7 +242,6 @@ if __name__ == "__main__":
             # Prépare les nouvelles coordonnées 
             nouveauX_j = joueurX + dxj 
             nouveauY_j = joueurY + dyj 
-
 
             # Vérifier si le joueur peut se déplacer sans sortir du circuit
             if point_dans_segment(x1, y1, x2, y2, joueurX, joueurY) and point_dans_segment(x1, y1, x2, y2, nouveauX_j, nouveauY_j):
@@ -298,8 +301,6 @@ if __name__ == "__main__":
                 sparx_Y2 += dep_S2_y
                 sparx2 = cercle(sparx_X2, sparx_Y2, tailleSparx, 'red', '', 2, tag='sparx2')
 
-  
-
         if (distance(sparx_X1, sparx_Y1, joueurX, joueurY) <= tailleJoueur) or (distance(sparx_X2, sparx_Y2, joueurX, joueurY) <= tailleJoueur):
             #Remets le joueur a son point de départ
             orientation_j = None
@@ -325,12 +326,15 @@ if __name__ == "__main__":
             if nombre_vie(vie_joueur):
                 break
 
+
+        sleep(vitesse)
         x_qix,y_qix=deplacement_qix(x_qix,y_qix,vitesse_qix,circuitX1,circuitX2,circuitY1,circuitY2,milieu_qix)
         efface('kong')
         qix(x_qix,y_qix)
+        sleep(0.01)
+
         mise_a_jour()
 
-    # TODO Les adversaires et leurs déplacements
     # TODO Niveaux et vitesses qui augmentent 
 
     attend_fermeture()
