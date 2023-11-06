@@ -346,3 +346,33 @@ def intersection_lignes_presentes(
                 return True
 
     return False
+
+def intersection_qix(lignes, x_qix, y_qix, taille_qix):
+    """
+    Vérifie si les lignes que dessine le joueur s'intersectent avec le Qix.
+
+    :param list lignes: liste des lignes de dessins actuelles
+    :param float x_qix: abscisse du Qix
+    :param float y_qix: ordonnée du Qix
+    :param float taille_qix: taille du Qix
+    :return: True s'il y a une intersection, False sinon
+    """
+    for ligne in lignes:
+        (x1, y1), (x2, y2) = ligne
+        # Calculer la distance entre le centre du Qix et le segment de ligne
+        denominateur = sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+        if denominateur == 0:
+            continue
+        distance = ((x2 - x1) * (y1 - y_qix) - (x1 - x_qix) * (y2 - y1)) / denominateur
+        if abs(distance) <= taille_qix / 2:
+            # Calculer la distance entre le centre du Qix et les extrémités du segment
+            distance1 = sqrt((x1 - x_qix) ** 2 + (y1 - y_qix) ** 2)
+            distance2 = sqrt((x2 - x_qix) ** 2 + (y2 - y_qix) ** 2)
+            if distance1 <= taille_qix / 2 or distance2 <= taille_qix / 2:
+                return True
+            # Vérifier si le centre du Qix se trouve sur la ligne
+            if (min(x1, x2) <= x_qix <= max(x1, x2)) and (min(y1, y2) <= y_qix <= max(y1, y2)):
+                return True
+
+    return False
+
