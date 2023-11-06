@@ -1,3 +1,6 @@
+
+from fltk import *
+from random import *
 def segments_initiaux(
         x1: float,
         x2: float,
@@ -160,3 +163,56 @@ def orientation_dep_sparx(
         dx = 0
         dy = max(-dep, -(sparx_Y - circuitY1))
     return dx, dy
+
+def deplacement_qix(
+        x_qix=float,
+        y_qix=float,
+        vitesse_qix=float,
+        circuitX1=float,
+        circuitX2=float,
+        circuitY1=float,
+        circuitY2=float,
+        milieu_qix=float,
+) ->float:
+    """
+    Cela prends en compte le x et y du qix, sa vitesse, les limites du circuit puis avance aléatoirement
+    :param float x_qix= Où se situe les coordonnés en x du qix
+    :param float y_qix= Où se situe les coordonnés en y du qix
+    :param float vitesse_qix=la vitesse de dépkacement du qix
+    :param float circuitX1=délimation du circuit
+    :param float circuitX2=délimation du circuit
+    :param float circuitY1=délimation du circuit 
+    :param float circuitY2=délimation du circuit 
+    :param float milieu_qix=Milieu du qix pour ne pas qu'il dépasse  
+    """
+    if x_qix==250 and y_qix==250:
+        x_qix=(randint((x_qix-vitesse_qix),(x_qix+vitesse_qix)))
+        y_qix=(randint((y_qix-vitesse_qix),(y_qix+vitesse_qix)))
+        mise_a_jour()
+
+    if y_qix<=circuitY1+milieu_qix:
+        x_qix=(randint((x_qix-vitesse_qix),(x_qix+vitesse_qix)))
+        y_qix=(randint((y_qix),(y_qix+vitesse_qix)))
+        mise_a_jour()
+
+    if y_qix>=circuitY2-milieu_qix:
+        x_qix=(randint((x_qix-vitesse_qix),(x_qix+vitesse_qix)))
+        y_qix=(randint((y_qix-vitesse_qix),(y_qix)))
+        mise_a_jour()
+
+    if x_qix<=circuitX1+milieu_qix:
+        x_qix=(randint((x_qix),(x_qix+vitesse_qix)))
+        y_qix=(randint((y_qix-vitesse_qix),(y_qix+vitesse_qix)))
+        mise_a_jour()
+
+    if x_qix>=circuitX2-milieu_qix:
+        x_qix=(randint((x_qix-vitesse_qix),(x_qix)))
+        y_qix=(randint((y_qix-vitesse_qix),(y_qix+vitesse_qix)))
+        mise_a_jour()
+
+    else:
+        x_qix=(randint((x_qix-vitesse_qix),(x_qix+vitesse_qix)))
+        y_qix=(randint((y_qix-vitesse_qix),(y_qix+vitesse_qix)))
+
+    mise_a_jour()
+    return x_qix,y_qix
