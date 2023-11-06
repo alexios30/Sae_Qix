@@ -201,9 +201,32 @@ if __name__ == "__main__":
                     liste_lignes.append(tuple(((joueurX, joueurY),(nouveauX_j, nouveauY_j))))
 
                     ####### CONDITION DU QIX SUR LES LIGNES #######
+                    if intersection_qix(liste_lignes,x_qix,y_qix,60):
+                        #Remets le joueur a son point de départ
+                        orientation_j = None
+                        joueurX = lFenetre // 2
+                        joueurY = circuitY2
+                        #Remets les sparx a leur point de départ
+                        sparx_X1 = lFenetre // 2
+                        sparx_Y1 = circuitY1
+                        orientation_S1 = 0  
+                        dep_S1_x = 1 
+                        dep_S1_y = 1
+                        sparx_X2 = lFenetre // 2
+                        sparx_Y2 = circuitY1    
+                        orientation_S2 = 180  
+                        dep_S2_x = 1  
+                        dep_S2_y = 1
+                        #Remets le qix a son point de départ
+                        x_qix = 300
+                        y_qix = 300
+                        #Enlève une vie 
+                        efface('vie')
+                        vie_joueur-=1
+                        if nombre_vie(vie_joueur):
+                            break
 
                     if intersection_lignes_presentes(liste_lignes):
-                        print("Perdu")
                         liste_lignes = []
                         # Remettre le joueur au point de départ
                         efface('joueur')
@@ -243,7 +266,6 @@ if __name__ == "__main__":
                     segments_traces = segment_par_coordonnee(coordonnee_poly)
                     for i in segments_traces:
                         segments_totaux.append(i)
-                    print(segments_totaux)
 
                     # tracé le polygone en vérifiant si des coins du circuit sont à rajouter                    
                     polygone(coordonnee_poly, 'white', 'green', tag='polygone')
@@ -345,7 +367,6 @@ if __name__ == "__main__":
                 break
 
 
-        sleep(vitesse)
         x_qix,y_qix=deplacement_qix(x_qix,y_qix,vitesse_qix,circuitX1,circuitX2,circuitY1,circuitY2,milieu_qix)
         efface('kong')
         qix(x_qix,y_qix)
