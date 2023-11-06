@@ -216,3 +216,15 @@ def deplacement_qix(
 
     mise_a_jour()
     return x_qix,y_qix
+
+def qix(
+        x_qix=float,
+        y_qix=float,
+)->float:
+    """
+    Cela prends les coordonnés du qix et renvoie l'image du qix avec ses nouvelle coordonnées
+    :param float x_qix= Où se situe les coordonnés en x du qix
+    :param float y_qix= Où se situe les coordonnés en y du qix
+    """
+    image(x_qix,y_qix,'kong.png',largeur=60,hauteur=60,ancrage="center",tag='kong')
+    return image
