@@ -24,8 +24,25 @@ if __name__ == "__main__":
     circuitY2 = hFenetre - espace_autour_circuit
 
     rectangle(circuitX1, circuitY1, circuitX2, circuitY2, 'white', tag='circuit')
+    
+    #Ecriture de qix
+    chaineQix="Qix"
+    tailleQix = 30
+    policeQix ="Stencil"
+    texte(40,30,chaineQix,police=policeQix,taille=tailleQix,couleur="blue",ancrage="center")
 
+    #Ecriture de vie restante
+    chaineQix="Vie Restante: "
+    tailleQix = 15
+    policeQix ="Courier"
+    texte(490,30,chaineQix,police=policeQix,taille=tailleQix,couleur="red",ancrage="center")
 
+    #Ecriture de 3
+    chaineQix="3"
+    tailleQix = 15
+    policeQix ="Courier"
+    texte(570,30,chaineQix,police=policeQix,taille=tailleQix,couleur="red",ancrage="center",tag='vie')
+    
     # TODO Création du joueur
 
     # Dimensions du joueur
@@ -34,6 +51,7 @@ if __name__ == "__main__":
     joueurY = circuitY2
 
     cercle(joueurX, joueurY, tailleJoueur, 'yellow', '', 2, tag='joueur')
+    vie_joueur = 3
 
     # Création des adversaires
 
@@ -61,7 +79,7 @@ if __name__ == "__main__":
     x_qix=300
     y_qix=300
     #Vitesse Qix
-    vitesse_qix=10
+    vitesse_qix=4
     #Milieu du Qix
     milieu_qix=30
     qix(x_qix, y_qix)
@@ -156,6 +174,29 @@ if __name__ == "__main__":
                 nouveauY_j = joueurY + dyj
 
                 if ((circuitX1 <= nouveauX_j <= circuitX2) and (circuitY1 <= nouveauY_j <= circuitY2)):
+                    if collision_qix(x_qix, y_qix, joueurX, joueurY, tailleJoueur):
+                        efface('segment_tracé')
+                        orientation_j = None
+                        joueurX = lFenetre // 2
+                        joueurY = circuitY2
+                        #Remets les sparx a leur point de départ
+                        sparx_X1 = lFenetre // 2
+                        sparx_Y1 = circuitY1
+                        orientation_S1 = 0  
+                        dep_S1_x = 1 
+                        dep_S1_y = 1
+                        sparx_X2 = lFenetre // 2
+                        sparx_Y2 = circuitY1    
+                        orientation_S2 = 180  
+                        dep_S2_x = 1  
+                        dep_S2_y = 1
+                        #Remets le qix a son point de départ
+                        x_qix = 300
+                        y_qix = 300
+                        efface('vie')
+                        vie_joueur-=1
+                        if nombre_vie(vie_joueur):
+                            break
                     efface('joueur')
                     # tracé les lignes des futures polygones 
                     ligne(joueurX, joueurY, nouveauX_j, nouveauY_j, couleur='white', tag='segment_tracé')
@@ -188,7 +229,7 @@ if __name__ == "__main__":
                     sortie = 0
                     break 
 
-            
+        
             # Déplacement en fonction de l'orientation du joueur
             new_orientation_j = orientation_dep_joueur(orientation_j, dep, espace_autour_circuit, lFenetre, hFenetre, circuitY1, joueurX, joueurY)
             dxj = new_orientation_j[0]
@@ -257,18 +298,39 @@ if __name__ == "__main__":
                 sparx_Y2 += dep_S2_y
                 sparx2 = cercle(sparx_X2, sparx_Y2, tailleSparx, 'red', '', 2, tag='sparx2')
 
-        sleep(vitesse)
+  
+
+        if (distance(sparx_X1, sparx_Y1, joueurX, joueurY) <= tailleJoueur) or (distance(sparx_X2, sparx_Y2, joueurX, joueurY) <= tailleJoueur):
+            #Remets le joueur a son point de départ
+            orientation_j = None
+            joueurX = lFenetre // 2
+            joueurY = circuitY2
+            #Remets les sparx a leur point de départ
+            sparx_X1 = lFenetre // 2
+            sparx_Y1 = circuitY1
+            orientation_S1 = 0  
+            dep_S1_x = 1 
+            dep_S1_y = 1
+            sparx_X2 = lFenetre // 2
+            sparx_Y2 = circuitY1    
+            orientation_S2 = 180  
+            dep_S2_x = 1  
+            dep_S2_y = 1
+            #Remets le qix a son point de départ
+            x_qix = 300
+            y_qix = 300
+            #Enlève une vie 
+            efface('vie')
+            vie_joueur-=1
+            if nombre_vie(vie_joueur):
+                break
+
         x_qix,y_qix=deplacement_qix(x_qix,y_qix,vitesse_qix,circuitX1,circuitX2,circuitY1,circuitY2,milieu_qix)
         efface('kong')
         qix(x_qix,y_qix)
-        sleep(0.01)
-
         mise_a_jour()
 
     # TODO Les adversaires et leurs déplacements
-
-    # TODO Les vies du joueur 
-
     # TODO Niveaux et vitesses qui augmentent 
 
     attend_fermeture()
