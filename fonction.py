@@ -1,6 +1,6 @@
 from random import *
 from fltk import *
-
+from math import *
 def segments_initiaux(
         x1: float,
         x2: float,
@@ -222,8 +222,8 @@ def deplacement_qix(x_qix, y_qix, vitesse_qix, circuitX1, circuitX2, circuitY1, 
 
 
 def qix(
-        x_qix=float,
-        y_qix=float,
+        x_qix:float,
+        y_qix:float,
 )->float:
     """
     Cela prends les coordonnés du qix et renvoie l'image du qix avec ses nouvelle coordonnées
@@ -232,3 +232,61 @@ def qix(
     """
     image(x_qix,y_qix,'kong.png',largeur=60,hauteur=60,ancrage="center",tag='kong')
     return image
+
+def distance(x1, y1, x2, y2):
+    """
+    Calcul la distance entre 2 point
+    :param float x1 = Où se situe les coordonnés en x du premier point
+    :param float y1 = Où se situe les coordonnés en y du premier point
+    :param float x2 = Où se situe les coordonnés en x du deuxième point
+    :param float y2 = Où se situe les coordonnés en y du deuxième point
+    """
+    return sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
+
+def collision_qix(
+        x_qix:float,
+        y_qix:float,
+        joueurX:float, 
+        joueurY:float,
+        tailleJoueur:float,
+)->float:
+    """
+    Calcule la distance du qix et du joueur et renvoye si ils sont touchés
+    :param float x_qix= Où se situe les coordonnés en x du qix
+    :param float y_qix= Où se situe les coordonnés en y du qix
+    :param float joueurX= Où se situe les coordonnés en x du joueur
+    :param float joueurY= Où se situe les coordonnés en y du joueur
+    :param float tailleJoueur=la taille du joueur
+    """
+    dist = distance(x_qix, y_qix, joueurX, joueurY)
+    return dist <= tailleJoueur
+
+
+def nombre_vie(
+        vie_joueur:float,
+)->float:
+    """
+    Prend en compte la vie du joueur et modifie l'écriture sur le jeux et si la vie est a 0, affiche Game over
+    :param vie_float=nombre de vie du joueur
+    """
+    if vie_joueur==2:
+        chaineQix= '2'
+        tailleQix = 15
+        policeQix ="Courier"
+        texte(570,30,chaineQix,police=policeQix,taille=tailleQix,couleur="red",ancrage="center",tag="vie")
+    if vie_joueur==1:
+        chaineQix= '1'
+        tailleQix = 15
+        policeQix ="Courier"
+        texte(570,30,chaineQix,police=policeQix,taille=tailleQix,couleur="red",ancrage="center",tag="vie")
+    if vie_joueur==0:
+        chaineQix= '0'
+        tailleQix = 15
+        policeQix ="Courier"
+        texte(570,30,chaineQix,police=policeQix,taille=tailleQix,couleur="red",ancrage="center",tag="vie")
+        chaineQix= 'GAME OVER'
+        tailleQix = 50
+        policeQix ="STENCIL"
+        texte(300,300,chaineQix,police=policeQix,taille=tailleQix,couleur="purple",ancrage="center",tag="game over")
+        return True
+    return False
