@@ -35,6 +35,7 @@ def segment_par_coordonnee(
 ) -> list:
     """
     Regroupe les coordonnées des changements d'orientation pour en faire des tuples de segments.
+
     :param list lst: liste des coordonnées de changement de direction
     :return: liste de tuples ``((x1, y1),(x2,y2))`` pour en faire des segments
     """
@@ -79,44 +80,7 @@ def point_dans_segment(
         return y_expected == py and min(x1, x2) <= px <= max(x1, x2)
 
 
-def directions_libres(
-        x: float, 
-        y: float,
-        segments: list,
-) -> list:
-    """
-    Définit les 2 directions perpendiculaires au segments actuel.
-
-    :param float x: abscisse du point
-    :param float y: ordonnée du point
-    :param list segments: liste des segments à vérifier (segments totaux)
-    :return: list de 2 directions
-    """
-
-    # À partir de la position (x, y), déterminez les directions où il n'y a pas de segments
-
-    directions = []  # Stockez les directions libres ici
-
-    # Vérifiez si le joueur peut se déplacer vers le haut
-    if all(not point_dans_segment(x1, y1, x2, y2, x, y - 1) for (x1, y1), (x2, y2) in segments):
-        directions.append(90)
-
-    # Vérifiez si le joueur peut se déplacer vers le bas
-    if all(not point_dans_segment(x1, y1, x2, y2, x, y + 1) for (x1, y1), (x2, y2) in segments):
-        directions.append(270)
-
-    # Vérifiez si le joueur peut se déplacer vers la gauche
-    if all(not point_dans_segment(x1, y1, x2, y2, x - 1, y) for (x1, y1), (x2, y2) in segments):
-        directions.append(180)
-
-    # Vérifiez si le joueur peut se déplacer vers la droite
-    if all(not point_dans_segment(x1, y1, x2, y2, x + 1, y) for (x1, y1), (x2, y2) in segments):
-        directions.append(0)
-
-    return directions
-
-
-def orientation_dep(
+def orientation_dep_joueur(
         orientation: float,
         dep: float,
         ecart: float,
@@ -125,8 +89,6 @@ def orientation_dep(
         circuitY1: float,
         x_joueur: float,
         y_joueur : float,
-        dx: float,
-        dy: float,
 ) -> float:
     """
     Par rapport à l'orientation donné, oriente le déplacement du joueur avec ses coordonnées. 
@@ -139,10 +101,10 @@ def orientation_dep(
     :param float circuitY1: ordonnée du coin supérieur gauche du circuit
     :param float x_joueur: abscisse du joueur
     :param float y_joueur: ordonnée du joueur
-    :param float dx: déplacement en abscisse dans la direction finale
-    :param float dy: déplacement en ordonnée dans la direction finale
-    :return: Déplacement finale ``(dx, dy)``
+    :return: Déplacement finale ``(dxj, dyj)``
     """
+    dx = 0
+    dy = 0
 
     if orientation == 180:
         dx = max(-dep, -(x_joueur - ecart))
@@ -156,5 +118,45 @@ def orientation_dep(
     elif orientation == 90:
         dx = 0
         dy = max(-dep, -(y_joueur - circuitY1))
+    return dx, dy
 
+
+def orientation_dep_sparx(
+        orientation: float,
+        dep: float,
+        ecart: float,
+        lFenetre: float,
+        hFenetre: float,
+        circuitY1: float,
+        sparx_X: float,
+        sparx_Y : float,
+) -> float:
+    """
+    Par rapport à l'orientation donné, oriente le déplacement du joueur avec ses coordonnées. 
+
+    :param float orientation: orientation souhaité du joueur
+    :param float dep: distance de déplacement
+    :param float ecart: espace entre circuit et fenetre
+    :param float lFenetre: largeur de la fenetre
+    :param float hFenetre: hauteur de la fenetre
+    :param float circuitY1: ordonnée du coin supérieur gauche du circuit
+    :param float x_joueur: abscisse du joueur
+    :param float y_joueur: ordonnée du joueur
+    :return: Déplacement finale ``(dxj, dyj)``
+    """
+    dx = 0
+    dy = 0
+
+    if orientation == 180:
+        dx = max(-dep, -(sparx_X - ecart))
+        dy = 0
+    elif orientation == 0:
+        dx = min(dep, lFenetre - sparx_X - ecart)
+        dy = 0
+    elif orientation == 270:
+        dx = 0
+        dy = min(dep, hFenetre - sparx_Y - ecart)
+    elif orientation == 90:
+        dx = 0
+        dy = max(-dep, -(sparx_Y - circuitY1))
     return dx, dy
