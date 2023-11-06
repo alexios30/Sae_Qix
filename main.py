@@ -67,6 +67,24 @@ if __name__ == "__main__":
     milieu_qix=30
     qix(x_qix, y_qix)
 
+    #Ecriture de vie restante
+    chaineQix="Vie Restante: "
+    tailleQix = 15
+    policeQix ="Courier"
+    texte(490,30,chaineQix,police=policeQix,taille=tailleQix,couleur="red",ancrage="center")
+
+    #Ecriture de qix
+    chaineQix="Qix"
+    tailleQix = 50
+    policeQix ="Stencil"
+    texte(300,50,chaineQix,police=policeQix,taille=tailleQix,couleur="blue",ancrage="center")
+
+    #Ecriture de 3
+    chaineQix="3"
+    tailleQix = 15
+    policeQix ="Courier"
+    texte(570,30,chaineQix,police=policeQix,taille=tailleQix,couleur="red",ancrage="center",tag='vie')
+
     
     # TODO Déplacements du joueur et fonctions de jeu
 
@@ -85,7 +103,7 @@ if __name__ == "__main__":
     liste_lignes = []
 
 
-    while True:
+    while vie_joueur > 0:
 
         ev = donne_ev()
         tev = type_ev(ev)
