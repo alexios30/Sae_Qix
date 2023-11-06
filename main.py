@@ -44,8 +44,8 @@ if __name__ == "__main__":
     sparx_X1 = lFenetre // 2
     sparx_Y1 = circuitY1
     orientation_S1 = 0
-    dep_S1_x = 0
-    dep_S1_y = 0
+    dep_S1_x = 1
+    dep_S1_y = 1
     cercle(sparx_X1, sparx_Y1, tailleSparx, 'red', '', 2, tag='sparx1')
 
     
@@ -53,9 +53,18 @@ if __name__ == "__main__":
     sparx_X2 = lFenetre // 2
     sparx_Y2 = circuitY1
     orientation_S2 = 180
-    dep_S2_x = 0
-    dep_S2_y = 0
+    dep_S2_x = 1
+    dep_S2_y = 1
     cercle(sparx_X2, sparx_Y2, tailleSparx, 'red', '', 2, tag='sparx2')
+
+    # Qix
+    x_qix=300
+    y_qix=300
+    #Vitesse Qix
+    vitesse_qix=10
+    #Milieu du Qix
+    milieu_qix=30
+    qix(x_qix, y_qix)
 
     
     # TODO Déplacements du joueur et fonctions de jeu
@@ -178,7 +187,7 @@ if __name__ == "__main__":
                     coordonnee_poly = []
                     sortie = 0
                     break 
-                
+
             
             # Déplacement en fonction de l'orientation du joueur
             new_orientation_j = orientation_dep_joueur(orientation_j, dep, espace_autour_circuit, lFenetre, hFenetre, circuitY1, joueurX, joueurY)
@@ -196,7 +205,15 @@ if __name__ == "__main__":
                 joueurX += dxj 
                 joueurY += dyj 
                 joueur = cercle(joueurX, joueurY, tailleJoueur, 'yellow', '', 2, tag='joueur')
-
+            
+            
+            # Si le sparx rencontre une intersection, il choisit au hasard parmit celles disponibles
+            # liste des orientations disponibles 
+            possibles_S1 = orientation_dispo(orientation_S1)
+            if dep_S1_x == 0 and dep_S1_y == 0:
+                orientation_S1 = choice(possibles_S1)
+            else:
+                pass
 
             # Déplacement du sparx 1 en fonction de l'orientation
             new_orientation_s1 = orientation_dep_sparx(orientation_S1, dep, espace_autour_circuit, lFenetre, hFenetre, circuitY1, sparx_X1, sparx_Y1)
@@ -216,6 +233,14 @@ if __name__ == "__main__":
                 sparx_Y1 += dep_S1_y
                 sparx1 = cercle(sparx_X1, sparx_Y1, tailleSparx, 'red', '', 2, tag='sparx1')
 
+            # Si le sparx rencontre une intersection, il choisit au hasard parmit celles disponibles
+            # liste des orientations disponibles 
+            possibles_S2 = orientation_dispo(orientation_S2)
+            if dep_S2_x == 0 and dep_S2_y == 0:
+                orientation_S2 = choice(possibles_S2)
+            else:
+                pass
+
             # Déplacement du sparx 2 en fonction de l'orientation
             new_orientation_s2 = orientation_dep_sparx(orientation_S2, dep, espace_autour_circuit, lFenetre, hFenetre, circuitY1, sparx_X2, sparx_Y2)
             dep_S2_x = new_orientation_s2[0]
@@ -226,15 +251,17 @@ if __name__ == "__main__":
             nouveauY_S2 = sparx_Y2 + dep_S2_y
 
             # deuxième sparx
-            if point_dans_segment(x1, y1, x2, y2, sparx_X2, sparx_Y2) :
+            if point_dans_segment(x1, y1, x2, y2, sparx_X2, sparx_Y2) and point_dans_segment(x1, y1, x2, y2, nouveauX_S2, nouveauY_S2):
                 efface('sparx2')
                 sparx_X2 += dep_S2_x
                 sparx_Y2 += dep_S2_y
                 sparx2 = cercle(sparx_X2, sparx_Y2, tailleSparx, 'red', '', 2, tag='sparx2')
 
         sleep(vitesse)
-
-
+        x_qix,y_qix=deplacement_qix(x_qix,y_qix,vitesse_qix,circuitX1,circuitX2,circuitY1,circuitY2,milieu_qix)
+        efface('kong')
+        qix(x_qix,y_qix)
+        sleep(0.01)
 
         mise_a_jour()
 
