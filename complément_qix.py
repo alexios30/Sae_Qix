@@ -1,0 +1,5 @@
+        x_qix,y_qix=deplacement_qix(x_qix,y_qix,vitesse_qix,circuitX1,circuitX2,circuitY1,circuitY2,milieu_qix)
+        efface('kong')
+        qix(x_qix,y_qix)
+        sleep(0.01)
+        mise_a_jour()
