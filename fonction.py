@@ -1,6 +1,6 @@
-
-from fltk import *
 from random import *
+from fltk import *
+
 def segments_initiaux(
         x1: float,
         x2: float,
@@ -145,7 +145,7 @@ def orientation_dep_sparx(
     :param float circuitY1: ordonnée du coin supérieur gauche du circuit
     :param float x_joueur: abscisse du joueur
     :param float y_joueur: ordonnée du joueur
-    :return: Déplacement finale ``(dxj, dyj)``
+    :return: Déplacement finale ``(dx, dy)``
     """
     dx = 0
     dy = 0
@@ -164,7 +164,25 @@ def orientation_dep_sparx(
         dy = max(-dep, -(sparx_Y - circuitY1))
     return dx, dy
 
-def deplacement_qix(x_qix, y_qix, vitesse_qix, circuitX1, circuitX2, circuitY1, circuitY2, milieu_qix, facteur=2.0):
+def orientation_dispo(
+        orientation: float,
+) -> list:
+    
+    orientations = [orientation]
+    
+    if orientation == 0:
+        orientations.extend([90, 270])
+    elif orientation == 90:
+        orientations.extend([0, 180])
+    elif orientation == 180:
+        orientations.extend([90, 270])
+    elif orientation == 270:
+        orientations.extend([0, 180])
+
+    return orientations
+
+
+def deplacement_qix(x_qix, y_qix, vitesse_qix, circuitX1, circuitX2, circuitY1, circuitY2, milieu_qix):
     """
     Effectue un déplacement aléatoire du Qix en tenant compte des limites du circuit.
     :param x_qix: Coordonnée x du Qix.
@@ -178,11 +196,8 @@ def deplacement_qix(x_qix, y_qix, vitesse_qix, circuitX1, circuitX2, circuitY1, 
     :param facteur: Facteur de multiplication pour augmenter la plage de déplacement aléatoire.
     :return: Nouvelles coordonnées du Qix (x_qix, y_qix).
     """
+    facteur = 2.0
     plage_deplacement = vitesse_qix * facteur
-
-    if x_qix == 250 and y_qix == 250:
-        x_qix = randint(x_qix - plage_deplacement, x_qix + plage_deplacement)
-        y_qix = randint(y_qix - plage_deplacement, y_qix + plage_deplacement)
 
     if y_qix <= circuitY1 + milieu_qix:
         x_qix = randint(x_qix - plage_deplacement, x_qix + plage_deplacement)
@@ -203,9 +218,8 @@ def deplacement_qix(x_qix, y_qix, vitesse_qix, circuitX1, circuitX2, circuitY1, 
     else:
         x_qix = randint(x_qix - plage_deplacement, x_qix + plage_deplacement)
         y_qix = randint(y_qix - plage_deplacement, y_qix + plage_deplacement)
-
-    mise_a_jour()
     return x_qix, y_qix
+
 
 def qix(
         x_qix=float,
