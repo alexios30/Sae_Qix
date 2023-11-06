@@ -124,7 +124,7 @@ if __name__ == "__main__":
                 #     depart += 1
 
                 # Déplacement en fonction de l'orientation du joueur
-                new_orientation_j = orientation_dep_joueur(orientation_j, dep, espace_autour_circuit, lFenetre, hFenetre, circuitY1, joueurX, joueurY, dxj, dyj)
+                new_orientation_j = orientation_dep_joueur(orientation_j, dep, espace_autour_circuit, lFenetre, hFenetre, circuitY1, joueurX, joueurY)
 
                 # si changement de trajectoire, prendre les coordonnées du joueur pour calculer son polygone
                 if orientation_j != old_orientation_j:
@@ -181,7 +181,7 @@ if __name__ == "__main__":
                 
             
             # Déplacement en fonction de l'orientation du joueur
-            new_orientation_j = orientation_dep_joueur(orientation_j, dep, espace_autour_circuit, lFenetre, hFenetre, circuitY1, joueurX, joueurY, dxj, dyj)
+            new_orientation_j = orientation_dep_joueur(orientation_j, dep, espace_autour_circuit, lFenetre, hFenetre, circuitY1, joueurX, joueurY)
             dxj = new_orientation_j[0]
             dyj = new_orientation_j[1]
 
@@ -199,9 +199,9 @@ if __name__ == "__main__":
 
 
             # Déplacement du sparx 1 en fonction de l'orientation
-            new_orientation_s = orientation_dep_sparx(orientation_S1, dep, espace_autour_circuit, lFenetre, hFenetre, circuitY1, sparx_X1, sparx_Y1)
-            dep_S1_x = new_orientation_s[0]
-            dep_S1_y = new_orientation_s[1]
+            new_orientation_s1 = orientation_dep_sparx(orientation_S1, dep, espace_autour_circuit, lFenetre, hFenetre, circuitY1, sparx_X1, sparx_Y1)
+            dep_S1_x = new_orientation_s1[0]
+            dep_S1_y = new_orientation_s1[1]
 
             # Prépare les nouvelles coordonnées du sparx 1
             nouveauX_S1 = sparx_X1 + dep_S1_x
@@ -216,11 +216,20 @@ if __name__ == "__main__":
                 sparx_Y1 += dep_S1_y
                 sparx1 = cercle(sparx_X1, sparx_Y1, tailleSparx, 'red', '', 2, tag='sparx1')
 
+            # Déplacement du sparx 2 en fonction de l'orientation
+            new_orientation_s2 = orientation_dep_sparx(orientation_S2, dep, espace_autour_circuit, lFenetre, hFenetre, circuitY1, sparx_X2, sparx_Y2)
+            dep_S2_x = new_orientation_s2[0]
+            dep_S2_y = new_orientation_s2[1]
+
+            # Prépare les nouvelles coordonnées du sparx 2
+            nouveauX_S2 = sparx_X2 + dep_S2_x
+            nouveauY_S2 = sparx_Y2 + dep_S2_y
+
             # deuxième sparx
             if point_dans_segment(x1, y1, x2, y2, sparx_X2, sparx_Y2) :
                 efface('sparx2')
-                sparx_X2 -= 5
-                # sparx_Y += randrange(10, 15)
+                sparx_X2 += dep_S2_x
+                sparx_Y2 += dep_S2_y
                 sparx2 = cercle(sparx_X2, sparx_Y2, tailleSparx, 'red', '', 2, tag='sparx2')
 
         sleep(vitesse)
