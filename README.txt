@@ -3,7 +3,7 @@ I. L'organisation du programme
 Le code réalisé par Alexis :
 
     - les adversaires   
-    - les collisions entre adversaires/joueur
+    - les collisions entre adversaires/joueur(+ perte de vie,réinitialisation des positions du joueur,sparx,qix)
     - les textes et image affichés pendant le jeu (Qix, vie, image du Qix)
 
 Le code réalisé par Julien : 
@@ -25,3 +25,4 @@ III. Les problèmes rencontrés
 
 Sur le plan des déplacements du joueur, nous avons principalement bloqué un peu de temps sur la touche 'entrée'. Nous voulons bien faire, et c'est pourquoi nous souhaitions que le joueur n'aurait pu sortir du circuit seulement si la touche 'entrée' était pressée.
 Nous voulions aussi que les déplacements soient autonomes, c'est-à-dire qu'il suffit d'appuyer une fois sur une flèche pour permettre le déplacement du joueur sans y rester appuyé.
+Pour la partie du Qix, nous voulions reproduire exacement le même qix que dans le vrai jeux avec l'animation, mais car c'était un peu plus compliqué que prévue, nous l'avions pas fait pour nous concentrer sur le jeux Qix en globalité que sur un design de l'ennemi.Nous allons peut-être reprendre cette idéé pour les rendus futurs. 
