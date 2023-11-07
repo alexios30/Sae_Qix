@@ -84,85 +84,44 @@ def point_dans_segment(
         return y_expected == py and min(x1, x2) <= px <= max(x1, x2)
 
 
-def orientation_dep_joueur(
+def orientation_dep(
         orientation: float,
         dep: float,
         ecart: float,
         lFenetre: float,
         hFenetre: float,
         circuitY1: float,
-        x_joueur: float,
-        y_joueur : float,
+        x_perso: float,
+        y_perso: float,
 ) -> float:
     """
-    Par rapport à l'orientation donné, oriente le déplacement du joueur avec ses coordonnées. 
+    Par rapport à l'orientation donné, oriente le déplacement du personnage avec ses coordonnées. 
 
-    :param float orientation: orientation souhaité du joueur
+    :param float orientation: orientation souhaité du personnage
     :param float dep: distance de déplacement
     :param float ecart: espace entre circuit et fenetre
     :param float lFenetre: largeur de la fenetre
     :param float hFenetre: hauteur de la fenetre
     :param float circuitY1: ordonnée du coin supérieur gauche du circuit
-    :param float x_joueur: abscisse du joueur
-    :param float y_joueur: ordonnée du joueur
+    :param float x_joueur: abscisse du personnage
+    :param float y_joueur: ordonnée du personnage
     :return: Déplacement finale ``(dxj, dyj)``
     """
     dx = 0
     dy = 0
 
     if orientation == 180:
-        dx = max(-dep, -(x_joueur - ecart))
+        dx = max(-dep, -(x_perso - ecart))
         dy = 0
     elif orientation == 0:
-        dx = min(dep, lFenetre - x_joueur - ecart)
+        dx = min(dep, lFenetre - x_perso - ecart)
         dy = 0
     elif orientation == 270:
         dx = 0
-        dy = min(dep, hFenetre - y_joueur - ecart)
+        dy = min(dep, hFenetre - y_perso - ecart)
     elif orientation == 90:
         dx = 0
-        dy = max(-dep, -(y_joueur - circuitY1))
-    return dx, dy
-
-
-def orientation_dep_sparx(
-        orientation: float,
-        dep: float,
-        ecart: float,
-        lFenetre: float,
-        hFenetre: float,
-        circuitY1: float,
-        sparx_X: float,
-        sparx_Y : float,
-) -> float:
-    """
-    Par rapport à l'orientation donné, oriente le déplacement du joueur avec ses coordonnées. 
-
-    :param float orientation: orientation souhaité du joueur
-    :param float dep: distance de déplacement
-    :param float ecart: espace entre circuit et fenetre
-    :param float lFenetre: largeur de la fenetre
-    :param float hFenetre: hauteur de la fenetre
-    :param float circuitY1: ordonnée du coin supérieur gauche du circuit
-    :param float x_joueur: abscisse du joueur
-    :param float y_joueur: ordonnée du joueur
-    :return: Déplacement finale ``(dx, dy)``
-    """
-    dx = 0
-    dy = 0
-
-    if orientation == 180:
-        dx = max(-dep, -(sparx_X - ecart))
-        dy = 0
-    elif orientation == 0:
-        dx = min(dep, lFenetre - sparx_X - ecart)
-        dy = 0
-    elif orientation == 270:
-        dx = 0
-        dy = min(dep, hFenetre - sparx_Y - ecart)
-    elif orientation == 90:
-        dx = 0
-        dy = max(-dep, -(sparx_Y - circuitY1))
+        dy = max(-dep, -(y_perso - circuitY1))
     return dx, dy
 
 
