@@ -48,7 +48,6 @@ if __name__ == "__main__":
     dep_S1_x = 1
     dep_S1_y = 1
     cercle(sparx_X1, sparx_Y1, tailleSparx, 'red', '', 2, tag='sparx1')
-
     
     # sparx 2
     sparx_X2 = lFenetre // 2
@@ -85,6 +84,8 @@ if __name__ == "__main__":
     policeQix ="Courier"
     texte(570,30,chaineQix,police=policeQix,taille=tailleQix,couleur="red",ancrage="center",tag='vie')
 
+    # Obstacles
+    nb_obstacle = 0
     
     # TODO Déplacements du joueur et fonctions de jeu
 
@@ -113,6 +114,7 @@ if __name__ == "__main__":
         if tev == 'Touche':
             nom_touche = touche(ev)
 
+            # Touche 'entrée' pressée
             if nom_touche == 'Return':
                 entree = 1
 
@@ -170,6 +172,9 @@ if __name__ == "__main__":
 
                 if ((circuitX1 <= nouveauX_j <= circuitX2) and (circuitY1 <= nouveauY_j <= circuitY2)):
 
+                    efface('joueur')
+
+                    # Collision qix / joueur
                     if collision_qix(x_qix, y_qix, joueurX, joueurY, tailleJoueur):
                         efface('segment_tracé')
                         orientation_j = None
@@ -178,7 +183,7 @@ if __name__ == "__main__":
                         #Remets les sparx a leur point de départ
                         sparx_X1 = lFenetre // 2
                         sparx_Y1 = circuitY1
-                        orientation_S1 = 0  
+                        orientation_S1 = 0
                         dep_S1_x = 1 
                         dep_S1_y = 1
                         sparx_X2 = lFenetre // 2
@@ -191,11 +196,11 @@ if __name__ == "__main__":
                         y_qix = 300
                         efface('vie')
                         vie_joueur-=1
+                        # sortir de la boucle entrée car le joueur revient sur le circuit
+                        entree = 0
                         if nombre_vie(vie_joueur):
                             break
 
-
-                    efface('joueur')
                     # tracé les lignes des futures polygones 
                     ligne(joueurX, joueurY, nouveauX_j, nouveauY_j, couleur='white', tag='segment_tracé')
                     liste_lignes.append(tuple(((joueurX, joueurY),(nouveauX_j, nouveauY_j))))
@@ -206,6 +211,8 @@ if __name__ == "__main__":
                         orientation_j = None
                         joueurX = lFenetre // 2
                         joueurY = circuitY2
+                        dxj = 0
+                        dyj = 0
                         #Remets les sparx a leur point de départ
                         sparx_X1 = lFenetre // 2
                         sparx_Y1 = circuitY1
@@ -220,6 +227,9 @@ if __name__ == "__main__":
                         #Remets le qix a son point de départ
                         x_qix = 300
                         y_qix = 300
+                        # sortir de la boucle entrée car le joueur revient sur le circuit
+                        entree = 0
+                        efface('segment_tracé')
                         #Enlève une vie 
                         efface('vie')
                         vie_joueur-=1
@@ -239,10 +249,10 @@ if __name__ == "__main__":
                         #Enlève une vie 
                         efface('vie')
                         vie_joueur-=1
-                        if nombre_vie(vie_joueur):
-                            break
                         # sortir de la boucle entrée car le joueur revient sur le circuit
                         entree = 0
+                        if nombre_vie(vie_joueur):
+                            break
                         break
 
                     if nombre_vie(vie_joueur):
@@ -266,6 +276,7 @@ if __name__ == "__main__":
                     segments_traces = segment_par_coordonnee(coordonnee_poly)
                     for i in segments_traces:
                         segments_totaux.append(i)
+                    print(segments_totaux)
 
                     # tracé le polygone en vérifiant si des coins du circuit sont à rajouter                    
                     polygone(coordonnee_poly, 'white', 'green', tag='polygone')
@@ -366,7 +377,19 @@ if __name__ == "__main__":
             if nombre_vie(vie_joueur):
                 break
 
+        if vie_joueur == 2 and nb_obstacle == 0:
+            coords_obstacle = point_au_milieu_aleatoire(segments_totaux)
+            obstacle_X1, obstacle_Y1 = coords_obstacle
+            cercle(obstacle_X1, obstacle_Y1, 5, 'red', 'red', tag='obstacle1')
+            nb_obstacle = 1
 
+        if vie_joueur == 1 and nb_obstacle == 1:
+            coords_obstacle = point_au_milieu_aleatoire(segments_totaux)
+            obstacle_X2, obstacle_Y2 = coords_obstacle
+            cercle(obstacle_X2, obstacle_Y2, 5, 'red', 'red', tag='obstacle2')
+            nb_obstacle = 2
+
+        sleep(vitesse)
         x_qix,y_qix=deplacement_qix(x_qix,y_qix,vitesse_qix,circuitX1,circuitX2,circuitY1,circuitY2,milieu_qix)
         efface('kong')
         qix(x_qix,y_qix)
@@ -375,5 +398,10 @@ if __name__ == "__main__":
         mise_a_jour()
 
     # TODO Niveaux et vitesses qui augmentent 
+
+    efface('joueur')
+    efface('sparx1')
+    efface('sparx2')
+    efface('kong')
 
     attend_fermeture()
