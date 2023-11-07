@@ -347,7 +347,13 @@ def intersection_lignes_presentes(
 
     return False
 
-def intersection_qix(lignes, x_qix, y_qix, taille_qix):
+
+def intersection_qix(
+        lignes: list, 
+        x_qix: float, 
+        y_qix: float, 
+        taille_qix: float,
+) -> bool:
     """
     Vérifie si les lignes que dessine le joueur s'intersectent avec le Qix.
 
@@ -357,6 +363,7 @@ def intersection_qix(lignes, x_qix, y_qix, taille_qix):
     :param float taille_qix: taille du Qix
     :return: True s'il y a une intersection, False sinon
     """
+
     for ligne in lignes:
         (x1, y1), (x2, y2) = ligne
         # Calculer la distance entre le centre du Qix et le segment de ligne
@@ -376,3 +383,42 @@ def intersection_qix(lignes, x_qix, y_qix, taille_qix):
 
     return False
 
+
+def point_au_milieu(
+        segment: list,
+) -> tuple[float, float]:
+    """
+    Choisi un point au hasard dans un segment.
+
+    :param list segment: coordonnées du début et fin du segment
+
+    :return: Points aléatoires ``(x, y)`` appartenant au segment
+    """
+
+    x1, y1 = segment[0]
+    x2, y2 = segment[1]
+
+    x = uniform(min(x1, x2), max(x1, x2))
+    y = uniform(min(y1, y2), max(y1, y2))
+
+    return (x, y)
+
+
+def point_au_milieu_aleatoire(
+        liste_segments: list,
+) -> tuple[float, float]:
+    """
+    Choisi un segment aléatoire dans la liste donnée
+
+    :param list liste_segments: liste des segments totaux
+
+    :return: Points aléatoires ``(x, y)`` appartenant au segment
+    """
+
+    if not liste_segments:
+        return None
+
+    segment_choisi = choice(liste_segments)
+    point_choisi = point_au_milieu(segment_choisi)
+
+    return point_choisi
