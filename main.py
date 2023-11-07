@@ -150,7 +150,7 @@ if __name__ == "__main__":
             if entree == 1: 
 
                 # Déplacement en fonction de l'orientation du joueur
-                new_orientation_j = orientation_dep_joueur(orientation_j, dep, espace_autour_circuit, lFenetre, hFenetre, circuitY1, joueurX, joueurY)
+                new_orientation_j = orientation_dep(orientation_j, dep, espace_autour_circuit, lFenetre, hFenetre, circuitY1, joueurX, joueurY)
 
                 # si changement de trajectoire, prendre les coordonnées du joueur pour calculer son polygone
                 if orientation_j != old_orientation_j:
@@ -201,11 +201,7 @@ if __name__ == "__main__":
                         if nombre_vie(vie_joueur):
                             break
 
-                    # tracé les lignes des futures polygones 
-                    ligne(joueurX, joueurY, nouveauX_j, nouveauY_j, couleur='white', tag='segment_tracé')
-                    liste_lignes.append(tuple(((joueurX, joueurY),(nouveauX_j, nouveauY_j))))
-
-                    ####### CONDITION DU QIX SUR LES LIGNES #######
+                    # Collision entre le qix et les lignes que dessine le joueur
                     if intersection_qix(liste_lignes,x_qix,y_qix,60):
                         #Remets le joueur a son point de départ
                         orientation_j = None
@@ -236,6 +232,7 @@ if __name__ == "__main__":
                         if nombre_vie(vie_joueur):
                             break
 
+                    # Le joueur dessine mais repasse sur sa ligne non-finie
                     if intersection_lignes_presentes(liste_lignes):
                         liste_lignes = []
                         # Remettre le joueur au point de départ
@@ -258,6 +255,10 @@ if __name__ == "__main__":
                     if nombre_vie(vie_joueur):
                         break
 
+                    # tracé les lignes des futures polygones 
+                    ligne(joueurX, joueurY, nouveauX_j, nouveauY_j, couleur='white', tag='segment_tracé')
+                    liste_lignes.append(tuple(((joueurX, joueurY),(nouveauX_j, nouveauY_j))))
+
                     joueurX += dxj
                     joueurY += dyj
                     joueur = cercle(joueurX, joueurY, tailleJoueur, 'yellow', '', 2, tag='joueur')
@@ -276,17 +277,15 @@ if __name__ == "__main__":
                     segments_traces = segment_par_coordonnee(coordonnee_poly)
                     for i in segments_traces:
                         segments_totaux.append(i)
-                    print(segments_totaux)
 
                     # tracé le polygone en vérifiant si des coins du circuit sont à rajouter                    
                     polygone(coordonnee_poly, 'white', 'green', tag='polygone')
 
                     coordonnee_poly = []
                     break 
-
             
             # Déplacement en fonction de l'orientation du joueur
-            new_orientation_j = orientation_dep_joueur(orientation_j, dep, espace_autour_circuit, lFenetre, hFenetre, circuitY1, joueurX, joueurY)
+            new_orientation_j = orientation_dep(orientation_j, dep, espace_autour_circuit, lFenetre, hFenetre, circuitY1, joueurX, joueurY)
             dxj = new_orientation_j[0]
             dyj = new_orientation_j[1]
 
@@ -311,14 +310,13 @@ if __name__ == "__main__":
                 pass
 
             # Déplacement du sparx 1 en fonction de l'orientation
-            new_orientation_s1 = orientation_dep_sparx(orientation_S1, dep, espace_autour_circuit, lFenetre, hFenetre, circuitY1, sparx_X1, sparx_Y1)
+            new_orientation_s1 = orientation_dep(orientation_S1, dep, espace_autour_circuit, lFenetre, hFenetre, circuitY1, sparx_X1, sparx_Y1)
             dep_S1_x = new_orientation_s1[0]
             dep_S1_y = new_orientation_s1[1]
 
             # Prépare les nouvelles coordonnées du sparx 1
             nouveauX_S1 = sparx_X1 + dep_S1_x
             nouveauY_S1 = sparx_Y1 + dep_S1_y
-
 
             # Vérifier si les sparx peuvent se déplacer en restant sur le circuit
             # premier sparx
@@ -331,13 +329,13 @@ if __name__ == "__main__":
             # Si le sparx rencontre une intersection, il choisit au hasard parmit celles disponibles
             # liste des orientations disponibles 
             possibles_S2 = orientation_dispo(orientation_S2)
-            if dep_S2_x == 0 and dep_S2_y == 0:
+            if dep_S2_x == 0 and dep_S2_y == 0: ### Trouver la bonne condition pour faire rentrer les sparx sur les segments totaux
                 orientation_S2 = choice(possibles_S2)
             else:
                 pass
 
             # Déplacement du sparx 2 en fonction de l'orientation
-            new_orientation_s2 = orientation_dep_sparx(orientation_S2, dep, espace_autour_circuit, lFenetre, hFenetre, circuitY1, sparx_X2, sparx_Y2)
+            new_orientation_s2 = orientation_dep(orientation_S2, dep, espace_autour_circuit, lFenetre, hFenetre, circuitY1, sparx_X2, sparx_Y2)
             dep_S2_x = new_orientation_s2[0]
             dep_S2_y = new_orientation_s2[1]
 
@@ -352,6 +350,7 @@ if __name__ == "__main__":
                 sparx_Y2 += dep_S2_y
                 sparx2 = cercle(sparx_X2, sparx_Y2, tailleSparx, 'red', '', 2, tag='sparx2')
 
+        # Collision Sparx / joueur
         if (distance(sparx_X1, sparx_Y1, joueurX, joueurY) <= tailleJoueur) or (distance(sparx_X2, sparx_Y2, joueurX, joueurY) <= tailleJoueur):
             #Remets le joueur a son point de départ
             orientation_j = None
