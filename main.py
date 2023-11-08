@@ -256,7 +256,7 @@ if __name__ == "__main__":
                         break
 
                     # tracé les lignes des futures polygones 
-                    ligne(joueurX, joueurY, nouveauX_j, nouveauY_j, couleur='white', tag='segment_tracé')
+                    ligne(joueurX, joueurY, nouveauX_j, nouveauY_j, couleur='yellow', tag='segment_tracé')
                     liste_lignes.append(tuple(((joueurX, joueurY),(nouveauX_j, nouveauY_j))))
 
                     joueurX += dxj
@@ -388,7 +388,6 @@ if __name__ == "__main__":
             cercle(obstacle_X2, obstacle_Y2, 5, 'red', 'red', tag='obstacle2')
             nb_obstacle = 2
 
-        sleep(vitesse)
         x_qix,y_qix=deplacement_qix(x_qix,y_qix,vitesse_qix,circuitX1,circuitX2,circuitY1,circuitY2,milieu_qix)
         efface('kong')
         qix(x_qix,y_qix)
