@@ -173,7 +173,8 @@ def segments_initiaux():
 def on_circuit_player(x, y):
     test_x, test_y = dep_player(direction, x, y)
     for i in liste_points:
-        if ((i[0][0] == i[1][0] == test_x and i[0][1] <= test_y <= i[1][1]) or (i[0][0] == i[1][0] == test_x and i[1][1] <= test_y <= i[0][1])) or ((i[0][1] == i[1][1] == test_y and i[0][0] <= test_x <= i[1][0]) or (i[0][1] == i[1][1] == test_y and i[1][0] <= test_x <= i[0][0])):
+        xA, yA, xB, yB = i[0][0], i[0][1], i[1][0], i[1][1]
+        if ((xA == xB == test_x and yA <= test_y <= yB) or (xA == xB == test_x and yB <= test_y <= yA)) or ((yA == yB == test_y and xA <= test_x <= xB) or (yA == yB == test_y and xB <= test_x <= xA)):
             return True
     return False
 
@@ -181,7 +182,8 @@ def on_circuit_player(x, y):
 def on_circuit_sparx(dir_sparx, x, y, num_sparx):
     test_x, test_y = dep_sparx(dir_sparx, x, y, num_sparx)
     for i in liste_points:
-        if ((i[0][0] == i[1][0] == test_x and i[0][1] <= test_y <= i[1][1]) or (i[0][0] == i[1][0] == test_x and i[1][1] <= test_y <= i[0][1])) or ((i[0][1] == i[1][1] == test_y and i[0][0] <= test_x <= i[1][0]) or (i[0][1] == i[1][1] == test_y and i[1][0] <= test_x <= i[0][0])):
+        xA, yA, xB, yB = i[0][0], i[0][1], i[1][0], i[1][1]
+        if ((xA == xB == test_x and yA <= test_y <= yB) or (xA == xB == test_x and yB <= test_y <= yA)) or ((yA == yB == test_y and xA <= test_x <= xB) or (yA == yB == test_y and xB <= test_x <= xA)):
             return True
     return False
 
