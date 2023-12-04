@@ -336,6 +336,10 @@ def intersection_ligne_qix(x_qix, y_qix, coords_ligne):
             return True
     return False
 
+def collision_sparx(x_sparx, y_sparx, x_player,y_player):
+    if sqrt((x_sparx - x_player) ** 2 + (y_sparx - y_player) ** 2)<= player_size:
+        return True
+    return False
 
 if __name__ == "__main__":
     main()
@@ -396,7 +400,7 @@ if __name__ == "__main__":
                 x_player, y_player = dep_player(direction, x_player, y_player)
 
         #### Collisions ####
-        if collision_qix_player() or intersection_ligne_qix(x_qix,y_qix,coords_poly):
+        if collision_qix_player() or intersection_ligne_qix(x_qix,y_qix,coords_poly) or collision_sparx(x1_sparx,y1_sparx,x_player,y_player) or collision_sparx(x2_sparx,y2_sparx,x_player,y_player) :
             life_player -= 1
             coords_poly = []
             reset()
