@@ -42,7 +42,9 @@ y_qix = x_qix
 vitesse_qix = 1
 midle_qix = 30
 
-
+#Pomme
+pomme_size=20
+pommes = []
 # Texte du jeu
 text_life = 'Vie restante'
 life = 3
@@ -99,6 +101,16 @@ def init_text_qix():
     texte(300, 40, chaine, 'blue', taille=size, ancrage='center')
 
 
+def init_pomme():
+    global pommes 
+    nom = 'pomme'
+    for i in range(randint(5, 8)):
+        x_pomme = randint(16, 584)
+        y_pomme = randint(91, 584)
+        tag_pomme = f'{nom}_{i}'
+        image(x_pomme, y_pomme, 'pomme.png', largeur=pomme_size, hauteur=pomme_size, ancrage='center', tag=tag_pomme)
+        pommes.append({'x': x_pomme, 'y': y_pomme, 'tag': tag_pomme})
+
 def init_text():
     init_text_life()
     init_text_qix()
@@ -110,7 +122,7 @@ def init_game():
     init_sparx()
     init_text()
     init_qix()
-
+    init_pomme()
 
 def main():
     cree_fenetre(dim_fenetre, dim_fenetre)
@@ -340,6 +352,15 @@ def collision_sparx(x_sparx, y_sparx, x_player,y_player):
     if sqrt((x_sparx - x_player) ** 2 + (y_sparx - y_player) ** 2)<= player_size:
         return True
     return False
+
+def collision_joueur_pomme():
+    global pommes
+    for i in pommes[:]: 
+        x_pomme, y_pomme, tag_pomme = i['x'], i['y'], i['tag']
+        distance = sqrt((x_pomme - x_player) ** 2 + (y_pomme - y_player) ** 2)
+        if distance < player_size + pomme_size / 2:
+            pommes.remove(i)
+            efface(tag_pomme)
 
 if __name__ == "__main__":
     main()
