@@ -80,23 +80,23 @@ def init_qix():
 def init_life(life):
     chaine = str(life)
     size_life = 17
-    police = 'Stencil'
-    texte(580, 10, chaine, 'red', police=police, taille=size_life, tag='life')
+    # police = 'Stencil'
+    texte(570, 10, chaine, 'red', taille=size_life, tag='life')
 
 
 def init_text_life():
     text_life = 'Vie restante :'
     size__text_life = 17
-    police = 'Stencil'
-    texte(400, 10, text_life, 'red', police=police, taille=size__text_life, tag='text_life')
+    # police = 'stencil'
+    texte(430, 10, text_life, 'red', taille=size__text_life, tag='text_life')
     init_life(life)
 
 
 def init_text_qix():
     chaine = 'Qix'
     size = 50
-    police = 'Stencil'
-    texte(300, 40, chaine, 'blue', police=police, taille=size, ancrage='center')
+    # police = 'Stencil'
+    texte(300, 40, chaine, 'blue', taille=size, ancrage='center')
 
 
 def init_text():
@@ -120,10 +120,22 @@ def main():
 
 
 def init_gameover():
+    efface('kong')
+    efface('sparx1')
+    efface('sparx2')
+    efface('player')
     chaine = 'GAME OVER'
     size = 50
     police ="Stencil"
     texte(300, 300, chaine, 'red', 'center', police, size, 'Game Over')
+
+
+def quitte():
+    ev = donne_ev()
+    t_ev = type_ev(ev)
+    if t_ev == 'Quitte':
+        return True
+    return False
 
 ##### Fonctions du jeu #####
 
@@ -149,13 +161,6 @@ def mise_a_jour_direction(direction):
             nouvelle_dir = 'echap'
     return nouvelle_dir
 
-
-def quitte():
-    ev = donne_ev()
-    t_ev = type_ev(ev)
-    if t_ev == 'Quitte':
-        return True
-    return False
 
 
 def init_deplace(direction, x, y):
@@ -183,6 +188,48 @@ def dep_sparx(dir_sparx, x_sparx, y_sparx, num_sparx):
     return x_sparx, y_sparx
 
 
+def choose_dir(dir_sparx):
+    lst_dir = [dir_sparx]
+    if dir_sparx == 'droite':
+        lst_dir.extend(['haut', 'bas'])
+    elif dir_sparx == 'haut':
+        lst_dir.extend(['gauche', 'droite'])
+    elif dir_sparx == 'gauche':
+        lst_dir.extend(['haut', 'bas'])
+    elif dir_sparx == 'bas':
+        lst_dir.extend(['droite', 'gauche'])
+    return lst_dir
+
+
+def test_turn_sparx(lst_directions, x_sparx, y_sparx, num_sparx):
+    lst_dispo = []
+    for i in lst_directions:
+        if (i == 'haut' and y_sparx == circuitY1) or (i == 'bas' and y_sparx == circuitY2) or (i == 'gauche' and x_sparx == circuitX1) or (i == 'droite' and x_sparx == circuitX2):
+            pass
+        else:
+            test_x1_sparx, test_y1_sparx = dep_sparx(i, x_sparx, y_sparx, num_sparx)
+            if on_circuit_sparx(i, test_x1_sparx, test_y1_sparx, num_sparx):
+                lst_dispo.append(i)
+    return lst_dispo
+
+
+def turn_sparx(dir_sparx1, dir_sparx2):
+    lst_dir_1 = choose_dir(dir_sparx1)
+    lst_dir_dispo_1 = test_turn_sparx(lst_dir_1, x1_sparx, y1_sparx, 1)
+
+    lst_dir_2 = choose_dir(dir_sparx2)
+    lst_dir_dispo_2 = test_turn_sparx(lst_dir_2, x2_sparx, y2_sparx, 2)
+    try:
+        dir_sparx1 = choice(lst_dir_dispo_1)
+    except:
+        pass
+    try:
+        dir_sparx2 = choice(lst_dir_dispo_2)
+    except:
+        pass
+    return dir_sparx1, dir_sparx2
+
+
 def dep_qix(x_qix, y_qix):
     efface('kong')
     facteur = 3.0
@@ -202,10 +249,7 @@ def dep_qix(x_qix, y_qix):
     nouvelle_x = max(circuitX1 + midle_qix, min(circuitX2 - midle_qix, nouvelle_x))
     nouvelle_y = max(circuitY1 + midle_qix, min(circuitY2 - midle_qix, nouvelle_y))
 
-
     return nouvelle_x, nouvelle_y
-
-
 
 ##### Fonctions sur les bases du circuit #####
 
@@ -247,14 +291,9 @@ def dessin_ligne(x, y):
     test_x, test_y = dep_player(direction, x, y)
     ligne(x, y, test_x, test_y, 'white', tag='ligne')
 
-##### Collisions #####
-
-def collision_qix_player():
-    distance = sqrt((x_qix - x_player) ** 2 + (y_qix - y_player) ** 2)
-    return distance < player_size
 
 def reset():
-    global x_qix, y_qix, x_player, y_player, x1_sparx, y1_sparx, x2_sparx, y2_sparx, touche_entree
+    global x_qix, y_qix, x_player, y_player, x1_sparx, y1_sparx, x2_sparx, y2_sparx, touche_entree, dir_sparx1, dir_sparx2
     touche_entree = 0 
     x_qix = 300
     y_qix = 300
@@ -263,9 +302,19 @@ def reset():
     x1_sparx = dim_fenetre // 2     # abscisse du sparx 1
     y1_sparx = circuitY1    # ordonnée du sparx 1
     x2_sparx = x1_sparx     
-    y2_sparx = y1_sparx  
+    y2_sparx = y1_sparx
+    dir_sparx1 = 'droite'
+    dir_sparx2 = 'gauche'
+
     efface('ligne')
     efface('polygone')
+
+##### Collisions #####
+
+def collision_qix_player():
+    distance = sqrt((x_qix - x_player) ** 2 + (y_qix - y_player) ** 2)
+    return distance < player_size
+
 
 def intersection_ligne_qix(x_qix, y_qix, coords_ligne):
     """
@@ -286,6 +335,7 @@ def intersection_ligne_qix(x_qix, y_qix, coords_ligne):
         if distance1 + distance2 - marge <= longueur_segment:
             return True
     return False
+
 
 if __name__ == "__main__":
     main()
@@ -309,13 +359,13 @@ if __name__ == "__main__":
         if temps % 5 == 0 and touche_entree == 0 and on_circuit_player(x_player, y_player):     # si joueur sur circuit, le faire déplacer
             x_player, y_player = dep_player(direction, x_player, y_player)
 
-        #### Déplacement du sparx ####
-        if temps % 5 == 0 and on_circuit_sparx(dir_sparx1, x1_sparx, y1_sparx, 1) and on_circuit_sparx(dir_sparx2, x2_sparx, y2_sparx, 2):      # si les sparxs sont sur le circuit, les faires se déplacer
-            
+        #### Déplacement des sparx ####
+        if temps % 5 == 0 and (on_circuit_sparx(dir_sparx1, x1_sparx, y1_sparx, 1) or on_circuit_sparx(dir_sparx2, x2_sparx, y2_sparx, 2)):      # si les sparxs sont sur le circuit, les faires se déplacer
+            dir_sparx1, dir_sparx2 = turn_sparx(dir_sparx1, dir_sparx2)
             
             x1_sparx, y1_sparx = dep_sparx(dir_sparx1, x1_sparx, y1_sparx, 1)
             x2_sparx, y2_sparx = dep_sparx(dir_sparx2, x2_sparx, y2_sparx, 2)
-            init_sparx()    # affiche les sparxs après leur déplacement 
+        init_sparx()    # affiche les sparxs après leur déplacement 
 
         #### Déplacement du qix ####
         x_qix, y_qix = dep_qix(x_qix, y_qix)
@@ -346,20 +396,14 @@ if __name__ == "__main__":
                 x_player, y_player = dep_player(direction, x_player, y_player)
 
         #### Collisions ####
-        if collision_qix_player() or intersection_ligne_qix(x_qix,y_qix,coords_poly) :
+        if collision_qix_player() or intersection_ligne_qix(x_qix,y_qix,coords_poly):
             life_player -= 1
-            coords_poly= []
-            liste_points =[]
-            liste_points=segments_initiaux()
+            coords_poly = []
             reset()
             efface('life')
             init_life(life_player)
 
         if life_player == 0:
-            efface('kong')
-            efface('sparx1')
-            efface('sparx2')
-            efface('player')
             init_gameover()
             break
         
