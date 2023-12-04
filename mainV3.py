@@ -38,8 +38,14 @@ dir_sparx2 = 'gauche'
 
  
 # Qix
-x_qix = dim_fenetre // 2
-y_qix = x_qix
+    # Qix
+x_qix=300
+y_qix=300
+#Vitesse Qix
+vitesse_qix=3
+#Milieu du Qix
+milieu_qix=30
+
 
 
 # Texte du jeu
@@ -75,7 +81,7 @@ def init_text_life():
     life = 'Vie restante :'
     size_life = 17
     police = 'Stencil'
-    texte(430, 10, life, 'red', police=police, taille=size_life)
+    texte(400, 10, life, 'red', police=police, taille=size_life)
 
 
 def init_text_qix():
@@ -83,7 +89,12 @@ def init_text_qix():
     size = 50
     police = 'Stecil'
     texte(300, 40, chaine, 'blue', police=police, taille=size, ancrage='center')
-
+   
+    #Ecriture de 3
+    chaineQix="3"
+    tailleQix = 17
+    policeQix ="stencil"
+    texte(580,23,chaineQix,police=policeQix,taille=tailleQix,couleur="red",ancrage="center",tag='vie')
 
 def init_text():
     init_text_life()
@@ -200,6 +211,117 @@ def dessin_ligne(x, y):
     test_x, test_y = dep_player(direction, x, y)
     ligne(x, y, test_x, test_y, 'white', tag='ligne')
 
+####Fonction Qix ####
+def qix(
+        x_qix: int,
+        y_qix: int,
+)-> float:
+    """
+    Cela prends les coordonnés du qix et renvoie l'image du qix avec ses nouvelle coordonnées
+    :param float x_qix= Où se situe les coordonnés en x du qix
+    :param float y_qix= Où se situe les coordonnés en y du qix
+    """
+    
+    image(x_qix,y_qix,'kong.png',largeur=60,hauteur=60,ancrage="center",tag='kong')
+    return image
+
+def deplacement_qix(x_qix: int, y_qix: int, vitesse_qix: int, marge: int) -> tuple[int, int]:
+    """
+    Effectue un déplacement aléatoire du Qix en tenant compte des limites du circuit.
+    :param x_qix: Coordonnée x du Qix.
+    :param y_qix: Coordonnée y du Qix.
+    :param vitesse_qix: Vitesse de déplacement du Qix.
+    :param marge: Marge pour éviter de dépasser les limites.
+    :return: Nouvelles coordonnées du Qix (x_qix, y_qix).
+    """
+    esp_circuit = 15
+    circuitX1 = esp_circuit
+    circuitY1 = 90      # ordonnée du premier coin du circuit (=hauteur du début du rectangle)
+    circuitX2 = dim_fenetre - esp_circuit
+    circuitY2 = dim_fenetre - esp_circuit
+    facteur = 2.0
+    plage_deplacement = vitesse_qix * facteur
+
+    directions = [(0, -1), (1, 0), (0, 1), (-1, 0)]  # Haut, Droite, Bas, Gauche
+    dx, dy = choice(directions)
+
+    # Générer un vecteur de déplacement aléatoire
+    deplacement_x = dx * plage_deplacement
+    deplacement_y = dy * plage_deplacement
+
+    nouvelle_x = x_qix + deplacement_x
+    nouvelle_y = y_qix + deplacement_y
+
+    # Assurer que les nouvelles coordonnées restent dans les limites
+    nouvelle_x = max(circuitX1 + marge, min(circuitX2 - marge, nouvelle_x))
+    nouvelle_y = max(circuitY1 + marge, min(circuitY2 - marge, nouvelle_y))
+
+    return nouvelle_x, nouvelle_y
+
+def apparaitre_qix(x_qix,y_qix):
+    efface('kong')
+    sleep(0.00)
+    qix(x_qix,y_qix)
+
+def distance(x1, y1, x2, y2):
+    """
+    Calcul la distance entre 2 point
+    :param float x1 = Où se situe les coordonnés en x du premier point
+    :param float y1 = Où se situe les coordonnés en y du premier point
+    :param float x2 = Où se situe les coordonnés en x du deuxième point
+    :param float y2 = Où se situe les coordonnés en y du deuxième point
+    """
+    return sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
+
+def collision_qix(
+        x_qix:int,
+        y_qix:int,
+        joueurX:int, 
+        joueurY:int,
+        tailleJoueur:int,
+)->float:
+    """
+    Calcule la distance du qix et du joueur et renvoye si ils sont touchés
+    :param float x_qix= Où se situe les coordonnés en x du qix
+    :param float y_qix= Où se situe les coordonnés en y du qix
+    :param float joueurX= Où se situe les coordonnés en x du joueur
+    :param float joueurY= Où se situe les coordonnés en y du joueur
+    :param float tailleJoueur=la taille du joueur
+    """
+    dist = distance(x_qix, y_qix, joueurX, joueurY)
+    return dist <= tailleJoueur
+
+####Nombre de vie #####
+def nombre_vie(
+        vie_joueur:float,
+)->float:
+    """
+    Prend en compte la vie du joueur et modifie l'écriture sur le jeux et si la vie est a 0, affiche Game over
+    :param vie_float=nombre de vie du joueur
+    """
+    if vie_joueur==2:
+        chaineQix= '2'
+        tailleQix = 17
+        policeQix ="Courier"
+        texte(570,30,chaineQix,police=policeQix,taille=tailleQix,couleur="red",ancrage="center",tag="vie")
+
+    if vie_joueur==1:
+        chaineQix= '1'
+        tailleQix = 17
+        policeQix ="stencil"
+        texte(580,23,chaineQix,police=policeQix,taille=tailleQix,couleur="red",ancrage="center",tag="vie")
+
+    if vie_joueur==0:
+        chaineQix= '0'
+        tailleQix = 17
+        policeQix ="stencil"
+        texte(580,23,chaineQix,police=policeQix,taille=tailleQix,couleur="red",ancrage="center",tag="vie")
+        chaineQix= 'GAME OVER'
+        tailleQix = 50
+        policeQix ="stencil"
+        texte(300,300,chaineQix,police=policeQix,taille=tailleQix,couleur="purple",ancrage="center",tag="game over")
+        return True
+    return False
 
 if __name__ == "__main__":
     main()
@@ -210,6 +332,8 @@ if __name__ == "__main__":
     temps = 0
     touche_entree = 0 
 
+    vie_joueur=3
+     
     while True:
         old_direction = direction   # enregistre l'ancienne direction avant MAJ
         direction = mise_a_jour_direction(direction)
@@ -256,7 +380,14 @@ if __name__ == "__main__":
         if quitte():    ## ne fonctionne pas ##
             ferme_fenetre()
             break
+        if collision_qix(x_qix, y_qix, x_player, y_player, player_size):
+            vie_joueur-=1
+            efface('vie')
+        if nombre_vie(vie_joueur):
+            break
 
+        x_qix,y_qix=deplacement_qix(x_qix,y_qix,vitesse_qix,milieu_qix)    
+        apparaitre_qix(x_qix,y_qix)
         temps = temps + 1
         mise_a_jour()
 
