@@ -80,15 +80,15 @@ def init_qix():
 def init_life(life):
     chaine = str(life)
     size_life = 17
-    police = 'Stecil'
-    texte(570, 10, chaine, 'red', police=police, taille=size_life, tag='life')
+    police = 'Stencil'
+    texte(580, 10, chaine, 'red', police=police, taille=size_life, tag='life')
 
 
 def init_text_life():
     text_life = 'Vie restante :'
     size__text_life = 17
     police = 'Stencil'
-    texte(430, 10, text_life, 'red', police=police, taille=size__text_life, tag='text_life')
+    texte(400, 10, text_life, 'red', police=police, taille=size__text_life, tag='text_life')
     init_life(life)
 
 
@@ -202,7 +202,10 @@ def dep_qix(x_qix, y_qix):
     nouvelle_x = max(circuitX1 + midle_qix, min(circuitX2 - midle_qix, nouvelle_x))
     nouvelle_y = max(circuitY1 + midle_qix, min(circuitY2 - midle_qix, nouvelle_y))
 
+
     return nouvelle_x, nouvelle_y
+
+
 
 ##### Fonctions sur les bases du circuit #####
 
@@ -250,7 +253,39 @@ def collision_qix_player():
     distance = sqrt((x_qix - x_player) ** 2 + (y_qix - y_player) ** 2)
     return distance < player_size
 
+def reset():
+    global x_qix, y_qix, x_player, y_player, x1_sparx, y1_sparx, x2_sparx, y2_sparx, touche_entree
+    touche_entree = 0 
+    x_qix = 300
+    y_qix = 300
+    x_player = dim_fenetre // 2
+    y_player = dim_fenetre - esp_circuit
+    x1_sparx = dim_fenetre // 2     # abscisse du sparx 1
+    y1_sparx = circuitY1    # ordonnée du sparx 1
+    x2_sparx = x1_sparx     
+    y2_sparx = y1_sparx  
+    efface('ligne')
+    efface('polygone')
 
+def intersection_ligne_qix(x_qix, y_qix, coords_ligne):
+    """
+    Vérifie si le Qix touche la ligne dessinée.
+    :param float x_qix: Coordonnée x du Qix.
+    :param float y_qix: Coordonnée y du Qix.
+    :param list[tuple[float, float]] coords_ligne: Coordonnées de la ligne.
+    :return: True si le Qix touche la ligne, sinon False.
+    """
+    global coords_poly
+    for i in range(len(coords_ligne) - 1):
+        x1, y1 = coords_ligne[i]
+        x2, y2 = coords_ligne[i + 1]
+        distance1 = sqrt((x_qix - x1) ** 2 + (y_qix - y1) ** 2)
+        distance2 = sqrt((x_qix - x2) ** 2 + (y_qix - y2) ** 2)
+        longueur_segment = sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
+        marge = 5
+        if distance1 + distance2 - marge <= longueur_segment:
+            return True
+    return False
 
 if __name__ == "__main__":
     main()
@@ -311,8 +346,12 @@ if __name__ == "__main__":
                 x_player, y_player = dep_player(direction, x_player, y_player)
 
         #### Collisions ####
-        if collision_qix_player():
+        if collision_qix_player() or intersection_ligne_qix(x_qix,y_qix,coords_poly) :
             life_player -= 1
+            coords_poly= []
+            liste_points =[]
+            liste_points=segments_initiaux()
+            reset()
             efface('life')
             init_life(life_player)
 
