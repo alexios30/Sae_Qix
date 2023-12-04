@@ -1,5 +1,5 @@
 from fltk import *
-from time import *
+from time import*
 from math import *
 from random import *
 
@@ -49,6 +49,10 @@ pommes = []
 text_life = 'Vie restante'
 life = 3
 
+#Invinsible
+invincible=False
+temps_invincible = 0
+duree_invincibilite = 3
 
 ##### Fonctions d'initialisation du jeu #####
 
@@ -305,7 +309,7 @@ def dessin_ligne(x, y):
 
 
 def reset():
-    global x_qix, y_qix, x_player, y_player, x1_sparx, y1_sparx, x2_sparx, y2_sparx, touche_entree, dir_sparx1, dir_sparx2
+    global x_qix, y_qix, x_player, y_player, x1_sparx, y1_sparx, x2_sparx, y2_sparx, touche_entree, dir_sparx1, dir_sparx2,invincible
     touche_entree = 0 
     x_qix = 300
     y_qix = 300
@@ -317,6 +321,7 @@ def reset():
     y2_sparx = y1_sparx
     dir_sparx1 = 'droite'
     dir_sparx2 = 'gauche'
+    invincible=False
 
     efface('ligne')
     efface('polygone')
@@ -354,13 +359,15 @@ def collision_sparx(x_sparx, y_sparx, x_player,y_player):
     return False
 
 def collision_joueur_pomme():
-    global pommes
+    global pommes,invincible,temps_invincible
     for i in pommes[:]: 
         x_pomme, y_pomme, tag_pomme = i['x'], i['y'], i['tag']
         distance = sqrt((x_pomme - x_player) ** 2 + (y_pomme - y_player) ** 2)
         if distance < player_size + pomme_size / 2:
             pommes.remove(i)
             efface(tag_pomme)
+            invincible = True
+            temps_invincible = time()
 
 if __name__ == "__main__":
     main()
@@ -421,12 +428,23 @@ if __name__ == "__main__":
                 x_player, y_player = dep_player(direction, x_player, y_player)
 
         #### Collisions ####
-        if collision_qix_player() or intersection_ligne_qix(x_qix,y_qix,coords_poly) or collision_sparx(x1_sparx,y1_sparx,x_player,y_player) or collision_sparx(x2_sparx,y2_sparx,x_player,y_player) :
-            life_player -= 1
-            coords_poly = []
-            reset()
-            efface('life')
-            init_life(life_player)
+        collision_joueur_pomme()
+        if invincible:
+            temps_actuel = time()
+            print(temps_actuel)
+            temps_ecoule_invincible = temps_actuel - temps_invincible
+
+            if temps_ecoule_invincible >= duree_invincibilite:
+                invincible = False  
+        if invincible:
+            pass
+        else:
+            if collision_qix_player() or intersection_ligne_qix(x_qix,y_qix,coords_poly) or collision_sparx(x1_sparx,y1_sparx,x_player,y_player) or collision_sparx(x2_sparx,y2_sparx,x_player,y_player) :
+                life_player -= 1
+                coords_poly = []
+                reset()
+                efface('life')
+                init_life(life_player)
 
         if life_player == 0:
             init_gameover()
@@ -435,7 +453,6 @@ if __name__ == "__main__":
         if quitte():    ## ne fonctionne pas ##
             ferme_fenetre()
             break
-
         temps = temps + 1
         mise_a_jour()
 
