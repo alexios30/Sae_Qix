@@ -38,7 +38,6 @@ dir_sparx2 = 'gauche'
 
  
 # Qix
-    # Qix
 x_qix=300
 y_qix=300
 #Vitesse Qix
@@ -260,9 +259,9 @@ def deplacement_qix(x_qix: int, y_qix: int, vitesse_qix: int, marge: int) -> tup
 
 def apparaitre_qix(x_qix,y_qix):
     efface('kong')
-    sleep(0.00)
     qix(x_qix,y_qix)
 
+####Collision###
 def distance(x1, y1, x2, y2):
     """
     Calcul la distance entre 2 point
@@ -291,6 +290,23 @@ def collision_qix(
     dist = distance(x_qix, y_qix, joueurX, joueurY)
     return dist <= tailleJoueur
 
+def reset():
+    global x_qix, y_qix, x_player, y_player, x1_sparx, y1_sparx, x2_sparx, y2_sparx, touche_entree
+    touche_entree = 0 
+    x_qix = 300
+    y_qix = 300
+    x_player = dim_fenetre // 2
+    y_player = dim_fenetre - esp_circuit
+
+    x1_sparx = dim_fenetre // 2     # abscisse du sparx 1
+    y1_sparx = circuitY1    # ordonnée du sparx 1
+
+    x2_sparx = x1_sparx     
+    y2_sparx = y1_sparx  
+
+    efface('ligne')
+    efface('polygone')
+
 ####Nombre de vie #####
 def nombre_vie(
         vie_joueur:float,
@@ -302,8 +318,8 @@ def nombre_vie(
     if vie_joueur==2:
         chaineQix= '2'
         tailleQix = 17
-        policeQix ="Courier"
-        texte(570,30,chaineQix,police=policeQix,taille=tailleQix,couleur="red",ancrage="center",tag="vie")
+        policeQix ="stencil"
+        texte(580,23,chaineQix,police=policeQix,taille=tailleQix,couleur="red",ancrage="center",tag="vie")
 
     if vie_joueur==1:
         chaineQix= '1'
@@ -322,6 +338,30 @@ def nombre_vie(
         texte(300,300,chaineQix,police=policeQix,taille=tailleQix,couleur="purple",ancrage="center",tag="game over")
         return True
     return False
+
+def intersection_ligne_qix(x_qix, y_qix, coords_ligne):
+    """
+    Vérifie si le Qix touche la ligne dessinée.
+    :param float x_qix: Coordonnée x du Qix.
+    :param float y_qix: Coordonnée y du Qix.
+    :param list[tuple[float, float]] coords_ligne: Coordonnées de la ligne.
+    :return: True si le Qix touche la ligne, sinon False.
+    """
+    for i in range(len(coords_ligne) - 1):
+        x1, y1 = coords_ligne[i]
+        x2, y2 = coords_ligne[i + 1]
+
+        distance1 = distance(x_qix, y_qix, x1, y1)
+        distance2 = distance(x_qix, y_qix, x2, y2)
+        longueur_segment = distance(x1, y1, x2, y2)
+
+        marge = 5
+        if distance1 + distance2 - marge <= longueur_segment:
+            return True
+
+    return False
+
+
 
 if __name__ == "__main__":
     main()
@@ -365,7 +405,7 @@ if __name__ == "__main__":
                 x_player, y_player = dep_player(direction, x_player, y_player)
 
                 coords_poly.append(tuple((x_player, y_player)))
-
+                print(liste_points)
                 polygone(coords_poly, 'white', 'green', tag='polygone')
                 liste_points.extend(segments_par_coords())
                 coords_poly = []
@@ -380,11 +420,19 @@ if __name__ == "__main__":
         if quitte():    ## ne fonctionne pas ##
             ferme_fenetre()
             break
-        if collision_qix(x_qix, y_qix, x_player, y_player, player_size):
-            vie_joueur-=1
+        
+        if collision_qix(x_qix, y_qix, x_player, y_player, player_size) or intersection_ligne_qix(x_qix, y_qix, coords_poly):
+            vie_joueur -= 1
             efface('vie')
+            coords_poly= []
+            liste_points =[]
+            liste_points=segments_initiaux()
+            reset()
+            
         if nombre_vie(vie_joueur):
             break
+
+
 
         x_qix,y_qix=deplacement_qix(x_qix,y_qix,vitesse_qix,milieu_qix)    
         apparaitre_qix(x_qix,y_qix)
