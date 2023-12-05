@@ -1,5 +1,5 @@
 from fltk import *
-from time import*
+from time import *
 from math import *
 from random import *
 
@@ -24,6 +24,7 @@ y_player = dim_fenetre - esp_circuit
 direction = None
 dep = 5
 life_player = 3
+speed_player = 5
 
 
 # Sparx
@@ -42,17 +43,22 @@ y_qix = x_qix
 vitesse_qix = 1
 midle_qix = 30
 
-#Pomme
-pomme_size=20
-pommes = []
+
 # Texte du jeu
 text_life = 'Vie restante'
-life = 3
 
-#Invinsible
+# Obstacles 
+nb_obstacles = 0
+
+# Pomme
+pomme_size=30
+pommes = []
+
+# Invincibilité 
 invincible=False
 temps_invincible = 0
 duree_invincibilite = 3
+
 
 ##### Fonctions d'initialisation du jeu #####
 
@@ -83,8 +89,8 @@ def init_qix():
     image(x_qix,y_qix,'kong.png',largeur=60,hauteur=60,ancrage="center",tag='kong')
 
 
-def init_life(life):
-    chaine = str(life)
+def init_life(life_player):
+    chaine = str(life_player)
     size_life = 17
     # police = 'Stencil'
     texte(570, 10, chaine, 'red', taille=size_life, tag='life')
@@ -95,7 +101,7 @@ def init_text_life():
     size__text_life = 17
     # police = 'stencil'
     texte(430, 10, text_life, 'red', taille=size__text_life, tag='text_life')
-    init_life(life)
+    init_life(life_player)
 
 
 def init_text_qix():
@@ -109,11 +115,12 @@ def init_pomme():
     global pommes 
     nom = 'pomme'
     for i in range(randint(5, 8)):
-        x_pomme = randint(16, 584)
-        y_pomme = randint(91, 584)
+        x_pomme = randint(circuitX1 + 1, dim_fenetre-(circuitX1+1))
+        y_pomme = randint(circuitY1 + 1, dim_fenetre-(circuitX1+1))
         tag_pomme = f'{nom}_{i}'
         image(x_pomme, y_pomme, 'pomme.png', largeur=pomme_size, hauteur=pomme_size, ancrage='center', tag=tag_pomme)
         pommes.append({'x': x_pomme, 'y': y_pomme, 'tag': tag_pomme})
+
 
 def init_text():
     init_text_life()
@@ -128,11 +135,16 @@ def init_game():
     init_qix()
     init_pomme()
 
+
 def main():
     cree_fenetre(dim_fenetre, dim_fenetre)
     rectangle(0, 0, dim_fenetre, dim_fenetre, 'black', 'black', tag="background")
     ready()
     init_game()
+
+
+def init_obstacle(x, y, num_obstacle):
+    cercle(x, y, 5, 'red', 'red', tag=f'obstacle{num_obstacle}')
 
 
 def init_gameover():
@@ -149,7 +161,7 @@ def init_gameover():
 def quitte():
     ev = donne_ev()
     t_ev = type_ev(ev)
-    if t_ev == 'Quitte':
+    if t_ev == 'Touche':
         return True
     return False
 
@@ -173,6 +185,8 @@ def mise_a_jour_direction(direction):
             nouvelle_dir = 'bas'
         if t == "Return":
             nouvelle_dir = 'entree'
+        if t == "space":
+            nouvelle_dir = 'espace'
         elif t == "Escape":
             nouvelle_dir = 'echap'
     return nouvelle_dir
@@ -309,22 +323,24 @@ def dessin_ligne(x, y):
 
 
 def reset():
-    global x_qix, y_qix, x_player, y_player, x1_sparx, y1_sparx, x2_sparx, y2_sparx, touche_entree, dir_sparx1, dir_sparx2,invincible
+    global x_qix, y_qix, x_player, y_player, x1_sparx, y1_sparx, x2_sparx, y2_sparx, touche_entree, touche_espace, speed_player, dir_sparx1, dir_sparx2, direction, invincible
     touche_entree = 0 
+    touche_espace = 0   # permet de remettre la vitesse initiale du joueur
+    speed_player = 5
+    invincible = False
     x_qix = 300
     y_qix = 300
     x_player = dim_fenetre // 2
     y_player = dim_fenetre - esp_circuit
+    direction = None
     x1_sparx = dim_fenetre // 2     # abscisse du sparx 1
     y1_sparx = circuitY1    # ordonnée du sparx 1
     x2_sparx = x1_sparx     
     y2_sparx = y1_sparx
     dir_sparx1 = 'droite'
     dir_sparx2 = 'gauche'
-    invincible=False
 
     efface('ligne')
-    efface('polygone')
 
 ##### Collisions #####
 
@@ -353,10 +369,19 @@ def intersection_ligne_qix(x_qix, y_qix, coords_ligne):
             return True
     return False
 
-def collision_sparx(x_sparx, y_sparx, x_player,y_player):
+
+def collision_sparx(x_sparx, y_sparx, x_player, y_player):
     if sqrt((x_sparx - x_player) ** 2 + (y_sparx - y_player) ** 2)<= player_size:
         return True
     return False
+
+
+def collision_obstacles(lst_osbtacles, x_player, y_player):
+    for i in lst_osbtacles:
+        if sqrt((i[0] - x_player) ** 2 + (i[1] - y_player) ** 2)<= player_size:
+            return True
+    return False
+
 
 def collision_joueur_pomme():
     global pommes,invincible,temps_invincible
@@ -369,15 +394,67 @@ def collision_joueur_pomme():
             invincible = True
             temps_invincible = time()
 
+
+##### Obstacles #####
+def point_random_on_segment(segment):
+    """ Renvoi un point appartenant à un segment donné """
+    x1, y1 = segment[0]
+    x2, y2 = segment[1]
+    x = uniform(min(x1, x2), max(x1, x2))
+    y = uniform(min(y1, y2), max(y1, y2))
+    return (x, y)
+
+
+def segment_random(liste_points):
+    """ Renvoi un point aléatoire appartenant au circuit entier """
+    if not liste_points:
+        return None
+    segment_choisi = choice(liste_points)
+    return point_random_on_segment(segment_choisi)
+
+
+def spawn_obstacle():
+    x, y = segment_random(liste_points)
+    init_obstacle(x, y, nb_obstacles)
+    return x, y
+
+
+def intersection_lignes_presentes(
+        lignes: list,
+) -> bool:
+    """
+    Vérifie si les lignes que dessine le joueur s'intersectent.
+    :param list lignes: liste des lignes de dessins actuel
+    :return: True s'il y a une intersection, False sinon
+    """
+    for i in range(len(lignes) - 1):
+        ligne1 = lignes[i]
+        for j in range(i + 1, len(lignes)):
+            ligne2 = lignes[j]
+            x1, y1 = ligne1[0]
+            x2, y2 = ligne1[1]
+            x3, y3 = ligne2[0]
+            x4, y4 = ligne2[1]
+            det = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
+            if det == 0:
+                continue
+            intersection_x = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / det
+            intersection_y = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / det
+            if min(x1, x2) <= intersection_x <= max(x1, x2) and min(y1, y2) <= intersection_y <= max(y1, y2) and min(x3, x4) <= intersection_x <= max(x3, x4) and min(y3, y4) <= intersection_y <= max(y3, y4):
+                return True 
+    return False
+
+
 if __name__ == "__main__":
     main()
 
     liste_points = segments_initiaux()      # liste des segments du circuit
     coords_poly = []        # liste des coordonnées du futur polygone à dessiner
-    liste_coins = []        # liste des coins du circuit
+    liste_osbtacles = []        # liste des coordonnées des osbtacles
 
     temps = 0
-    touche_entree = 0 
+    touche_entree = 0       # touche qui permet le dessin
+    touche_espace = 0       # touche qui permet l'accélération du joueur
 
     while True:
         old_direction = direction   # enregistre l'ancienne direction avant MAJ
@@ -388,7 +465,7 @@ if __name__ == "__main__":
             break
 
         #### Déplacement du joueur ####
-        if temps % 5 == 0 and touche_entree == 0 and on_circuit_player(x_player, y_player):     # si joueur sur circuit, le faire déplacer
+        if temps % speed_player == 0 and touche_entree == 0 and on_circuit_player(x_player, y_player):     # si joueur sur circuit, le faire déplacer
             x_player, y_player = dep_player(direction, x_player, y_player)
 
         #### Déplacement des sparx ####
@@ -403,6 +480,7 @@ if __name__ == "__main__":
         x_qix, y_qix = dep_qix(x_qix, y_qix)
         init_qix()
 
+        
         #### Dessins ####
         if direction == 'entree':
             touche_entree = 1
@@ -410,8 +488,12 @@ if __name__ == "__main__":
         if touche_entree == 1 and old_direction != direction:   # si changement de direction pendant le dessin
             coords_poly.append(tuple((x_player, y_player)))
 
-        if temps % 5 == 0 and touche_entree == 1:   # si touche entrée pressée, le joueur se déplace dans l'air complète
+        if temps % speed_player == 0 and touche_entree == 1:   # si touche entrée pressée, le joueur se déplace dans l'air complète
            
+            if direction == 'espace' and touche_espace == 0:
+                speed_player //= 2
+                touche_espace = 1
+
             if on_circuit_player(x_player, y_player):   # si joueur revient sur circuit, dessin du polygone et ajout des lignes au circuit
                 x_player, y_player = dep_player(direction, x_player, y_player)
 
@@ -420,39 +502,55 @@ if __name__ == "__main__":
                 polygone(coords_poly, 'white', 'green', tag='polygone')
                 liste_points.extend(segments_par_coords())
                 coords_poly = []
-                efface('ligne')     # évite d'avoir les lignes dessinés en plus des lignes du polygone (qui sont les mêmes)
 
+                efface('ligne')     # évite d'avoir les lignes dessinés en plus des lignes du polygone (qui sont les mêmes)
                 touche_entree = 0   # permet de ressortir de la boucle 'entrée'
+                touche_espace = 0   # permet de remettre la vitesse initiale du joueur
+                speed_player = 5
             else:
                 dessin_ligne(x_player, y_player)
                 x_player, y_player = dep_player(direction, x_player, y_player)
 
+        # if intersection_lignes_presentes(coords_poly):
+        #     print('oui')
+
         #### Collisions ####
         collision_joueur_pomme()
+        
         if invincible:
             temps_actuel = time()
-            print(temps_actuel)
             temps_ecoule_invincible = temps_actuel - temps_invincible
 
             if temps_ecoule_invincible >= duree_invincibilite:
-                invincible = False  
-        if invincible:
-            pass
+                invincible = False
         else:
-            if collision_qix_player() or intersection_ligne_qix(x_qix,y_qix,coords_poly) or collision_sparx(x1_sparx,y1_sparx,x_player,y_player) or collision_sparx(x2_sparx,y2_sparx,x_player,y_player) :
+            if collision_qix_player() or intersection_ligne_qix(x_qix,y_qix,coords_poly) or collision_sparx(x1_sparx,y1_sparx,x_player,y_player) or collision_sparx(x2_sparx,y2_sparx,x_player,y_player):
                 life_player -= 1
                 coords_poly = []
                 reset()
                 efface('life')
                 init_life(life_player)
 
+        if life_player == 2 and nb_obstacles == 0:
+            liste_osbtacles.append(spawn_obstacle())
+            nb_obstacles += 1
+        if life_player == 1 and nb_obstacles == 1:
+            liste_osbtacles.append(spawn_obstacle())
+            nb_obstacles += 1
+
+
+        if collision_obstacles(liste_osbtacles, x_player, y_player):
+            direction = None
+
+        
         if life_player == 0:
             init_gameover()
             break
-        
+
         if quitte():    ## ne fonctionne pas ##
             ferme_fenetre()
             break
+
         temps = temps + 1
         mise_a_jour()
 
