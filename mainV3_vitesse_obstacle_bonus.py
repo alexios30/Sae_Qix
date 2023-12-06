@@ -70,6 +70,27 @@ def ready():
     attend_ev()
     efface('texte')
 
+def ecriture():
+        texte(
+        300, 200,
+        "Qix Basique: Tapez 1", "red", "center",
+        tag='qix_basique'
+    )
+        texte(
+        300, 300,
+        "Versus: Tapez 2", "red", "center",
+        tag='double_joueur'
+    )
+        texte(
+        300, 400,
+        "Qix Difficile:Tapez 3", "red", "center",
+        tag='qix_difficile'
+    )
+        attend_ev()
+        efface('qix_basique')
+        efface('double_joueur')
+        efface('qix_difficile')
+
 
 def init_circuit():
     rectangle(circuitX1, circuitY1, circuitX2, circuitY2, 'white', tag='circuit')
@@ -124,7 +145,7 @@ def init_text():
     init_text_qix()
 
 
-def init_game():
+def init_game1():
     init_circuit()
     init_player()
     init_sparx()
@@ -135,8 +156,10 @@ def init_game():
 def main():
     cree_fenetre(dim_fenetre, dim_fenetre)
     rectangle(0, 0, dim_fenetre, dim_fenetre, 'black', 'black', tag="background")
-    ready()
-    init_game()
+    ecriture()
+    choix_jeux=input("Choix du jeux")
+    if choix_jeux=="1":
+        init_game1()
 
 
 def init_obstacle(x, y, num_obstacle):
