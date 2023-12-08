@@ -43,6 +43,11 @@ y_qix = x_qix
 vitesse_qix = 1
 midle_qix = 30
 
+x_qix2=200
+y_qix2=200
+
+x_qix3=400
+y_qix3=400
 
 # Texte du jeu
 text_life = 'Vie restante'
@@ -59,6 +64,8 @@ invincible=False
 temps_invincible = 0
 duree_invincibilite = 3
 
+#choix Jeu
+
 ##### Fonctions d'initialisation du jeu #####
 
 def ready():
@@ -71,26 +78,26 @@ def ready():
     efface('texte')
 
 def ecriture():
-        texte(
-        300, 200,
-        "Qix Basique: Tapez 1", "red", "center",
-        tag='qix_basique'
-    )
-        texte(
-        300, 300,
-        "Versus: Tapez 2", "red", "center",
-        tag='double_joueur'
-    )
-        texte(
-        300, 400,
-        "Qix Difficile:Tapez 3", "red", "center",
-        tag='qix_difficile'
-    )
-        attend_ev()
-        efface('qix_basique')
-        efface('double_joueur')
-        efface('qix_difficile')
+        choix_jeu=None
+        texte(300, 200,"Qix Basique", "red", "center",tag='qix_basique')
+        rectangle(200,150,400,250,"blue",tag='rectangle1')
+        texte(300, 400,"Qix Difficile", "red", "center",tag='qix_difficile')
+        rectangle(200,350,400,450,"blue",tag='rectangle1')
 
+        clicx,clicy=attend_clic_gauche()
+        if clicx>=200 and clicx<=400 and clicy>=150 and clicy<=250:
+            efface('rectangle1')
+            efface('qix_basique')
+            efface('qix_difficile')
+            choix_jeu='Basique'
+            return choix_jeu
+        
+        if clicx>=200 and clicx<=400 and clicy>=350 and clicy<=450:
+            efface('rectangle1')
+            efface('qix_basique')
+            efface('qix_difficile')
+            choix_jeu="Difficile"
+            return choix_jeu
 
 def init_circuit():
     rectangle(circuitX1, circuitY1, circuitX2, circuitY2, 'white', tag='circuit')
@@ -104,10 +111,11 @@ def init_sparx():
     cercle(x1_sparx, y1_sparx, sparx_size, 'red', '', 2, tag='sparx1')
     cercle(x2_sparx, y2_sparx, sparx_size, 'red', '', 2, tag='sparx2')
 
-
 def init_qix():
-    image(x_qix,y_qix,'kong.png',largeur=60,hauteur=60,ancrage="center",tag='kong')
+    image(x_qix,y_qix,'kong.png',largeur=60,hauteur=60,ancrage="center",tag='kong1')
 
+def init_qix2():
+    image(x_qix2,y_qix2,'kong.png',largeur=60,hauteur=60,ancrage="center",tag='kong2')
 
 def init_life(life_player):
     chaine = str(life_player)
@@ -130,6 +138,11 @@ def init_text_qix():
     # police = 'Stencil'
     texte(300, 40, chaine, 'blue', taille=size, ancrage='center')
 
+def init_invincible():
+    texte_invincible="Invincible"
+    size_invicible=17
+    texte(60,50,texte_invincible,'green',taille=size_invicible,ancrage='center',tag="Invincible")
+
 def init_pomme():
     global pommes 
     nom = 'pomme'
@@ -144,22 +157,21 @@ def init_text():
     init_text_life()
     init_text_qix()
 
-
-def init_game1():
+def init_game(choix_jeu):
     init_circuit()
     init_player()
     init_sparx()
     init_text()
     init_qix()
     init_pomme()
+    if choix_jeu=="Difficile":
+        init_qix2()
 
 def main():
     cree_fenetre(dim_fenetre, dim_fenetre)
     rectangle(0, 0, dim_fenetre, dim_fenetre, 'black', 'black', tag="background")
-    ecriture()
-    choix_jeux=input("Choix du jeux")
-    if choix_jeux=="1":
-        init_game1()
+    choix_jeu=ecriture()
+    return choix_jeu
 
 
 def init_obstacle(x, y, num_obstacle):
@@ -279,8 +291,8 @@ def turn_sparx(dir_sparx1, dir_sparx2):
     return dir_sparx1, dir_sparx2
 
 
-def dep_qix(x_qix, y_qix):
-    efface('kong')
+def dep_qix(x_qix, y_qix,num_qix):
+    efface(f'kong{num_qix}')
     facteur = 3.0
     plage_deplacement = vitesse_qix * facteur
 
@@ -350,7 +362,7 @@ def reset():
     y_player = dim_fenetre - esp_circuit
     direction = None
     x1_sparx = dim_fenetre // 2     # abscisse du sparx 1
-    y1_sparx = circuitY1    # ordonnée du sparx 1
+    y1_sparx = circuitY1    # ordonnée du sparx 1          
     x2_sparx = x1_sparx     
     y2_sparx = y1_sparx
     dir_sparx1 = 'droite'
@@ -361,7 +373,7 @@ def reset():
 
 ##### Collisions #####
 
-def collision_qix_player():
+def collision_qix_player(x_qix,y_qix,x_player,y_player):
     distance = sqrt((x_qix - x_player) ** 2 + (y_qix - y_player) ** 2)
     return distance < player_size
 
@@ -411,6 +423,7 @@ def collision_joueur_pomme():
             temps_invincible = time()
 
 
+
 ##### Obstacles #####
 def point_random_on_segment(segment):
     """ Renvoi un point appartenant à un segment donné """
@@ -436,8 +449,11 @@ def spawn_obstacle():
 
 
 if __name__ == "__main__":
-    main()
-
+    choix_jeu=main()
+    ready()
+    print(choix_jeu)
+    init_game(choix_jeu)
+        
     liste_points = segments_initiaux()      # liste des segments du circuit
     coords_poly = []        # liste des coordonnées du futur polygone à dessiner
     liste_osbtacles = []        # liste des coordonnées des osbtacles
@@ -446,6 +462,9 @@ if __name__ == "__main__":
     touche_entree = 0       # touche qui permet le dessin
     touche_espace = 0       # touche qui permet l'accélération du joueur
 
+
+
+    
     while True:
         old_direction = direction   # enregistre l'ancienne direction avant MAJ
         direction = mise_a_jour_direction(direction)
@@ -464,13 +483,17 @@ if __name__ == "__main__":
             
             x1_sparx, y1_sparx = dep_sparx(dir_sparx1, x1_sparx, y1_sparx, 1)
             x2_sparx, y2_sparx = dep_sparx(dir_sparx2, x2_sparx, y2_sparx, 2)
+
         init_sparx()    # affiche les sparxs après leur déplacement 
 
         #### Déplacement du qix ####
-        x_qix, y_qix = dep_qix(x_qix, y_qix)
+        x_qix, y_qix = dep_qix(x_qix, y_qix,1)
         init_qix()
-
         
+        if choix_jeu=="Difficile":
+            x_qix2,y_qix2=dep_qix(x_qix,y_qix2,2)
+            init_qix2()
+
         #### Dessins ####
         if direction == 'entree':
             touche_entree = 1
@@ -479,7 +502,7 @@ if __name__ == "__main__":
             coords_poly.append(tuple((x_player, y_player)))
 
         if temps % speed_player == 0 and touche_entree == 1:   # si touche entrée pressée, le joueur se déplace dans l'air complète
-           
+        
             if direction == 'espace' and touche_espace == 0:
                 speed_player //= 2
                 touche_espace = 1
@@ -504,8 +527,8 @@ if __name__ == "__main__":
         #### Collisions ####
         collision_joueur_pomme()
         if invincible:
+            init_invincible()
             temps_actuel = time()
-            print(temps_actuel)
             temps_ecoule_invincible = temps_actuel - temps_invincible
 
             if temps_ecoule_invincible >= duree_invincibilite:
@@ -513,7 +536,8 @@ if __name__ == "__main__":
         if invincible:
             pass
         else:
-            if collision_qix_player() or intersection_ligne_qix(x_qix,y_qix,coords_poly) or collision_sparx(x1_sparx,y1_sparx,x_player,y_player) or collision_sparx(x2_sparx,y2_sparx,x_player,y_player):
+            efface('Invincible')
+            if collision_qix_player(x_qix,y_qix,x_player,y_player) or intersection_ligne_qix(x_qix,y_qix,coords_poly) or collision_sparx(x1_sparx,y1_sparx,x_player,y_player) or collision_sparx(x2_sparx,y2_sparx,x_player,y_player):
                 life_player -= 1
                 coords_poly = []
                 reset()
@@ -547,3 +571,6 @@ if __name__ == "__main__":
 
     attend_ev()
     ferme_fenetre()
+
+
+     
