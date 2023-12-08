@@ -19,7 +19,7 @@ Le code réalisé par Julien :
     - l'intersection de sa propre ligne pendant le dessin 
     - les dessins du joueur*
 Update rendu 2: 
-    -Refait le déplacment du joueur(pour avoir plus de fluidité)
+    -Refait le déplacement du joueur(pour avoir plus de fluidité)
     -Fait le bonus sparx interne
     -Fait le bonus obstacle
     -Fait le bonus vitesse
