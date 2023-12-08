@@ -536,7 +536,7 @@ if __name__ == "__main__":
             pass
         else:
             efface('Invincible')
-            if collision_qix_player(x_qix,y_qix,x_player,y_player) or intersection_ligne_qix(x_qix,y_qix,coords_poly) or collision_sparx(x1_sparx,y1_sparx,x_player,y_player) or collision_sparx(x2_sparx,y2_sparx,x_player,y_player):
+            if collision_qix_player(x_qix,y_qix,x_player,y_player)or collision_qix_player(x_qix2,y_qix2,x_player,y_player) or intersection_ligne_qix(x_qix2,y_qix2,coords_poly) or collision_sparx(x1_sparx,y1_sparx,x_player,y_player) or collision_sparx(x2_sparx,y2_sparx,x_player,y_player):
                 life_player -= 1
                 coords_poly = []
                 reset()
