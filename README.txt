@@ -5,13 +5,15 @@ Le code réalisé par Alexis :
     - les adversaires   
     - les collisions entre adversaires/joueur(+ perte de vie,réinitialisation des positions du joueur,sparx,qix)
     - les textes et image affichés pendant le jeu (Qix, vie, image du Qix)
+Update rendu 2: 
 
 Le code réalisé par Julien : 
 
     - le design de la fenêtre
     - les déplacements du joueur (les touches pressées, les conditions de déplacements possibles/impossibles)
     - l'intersection de sa propre ligne pendant le dessin 
-    - les dessins du joueur
+    - les dessins du joueur*
+Update rendu 2: 
 
 II. Les choix techniques
 
