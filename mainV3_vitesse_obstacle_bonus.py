@@ -37,7 +37,11 @@ x2_sparx = x1_sparx     # abscisse du sparx 2
 y2_sparx = y1_sparx     # ordonnée du sparx 2
 dir_sparx2 = 'gauche'
 
- 
+x3_sparx=15
+y3_sparx=300
+dir_sparx3="bas"
+
+
 # Qix
 x_qix = dim_fenetre // 2
 y_qix = x_qix
@@ -54,7 +58,7 @@ text_life = 'Vie restante'
 nb_obstacles = 0
 
 # Pomme
-pomme_size=30
+pomme_size=25
 pommes = []
 
 # Invincibilité 
@@ -113,6 +117,10 @@ def init_sparx():
     """Affiche les sparxs"""
     cercle(x1_sparx, y1_sparx, sparx_size, 'red', '', 2, tag='sparx1')
     cercle(x2_sparx, y2_sparx, sparx_size, 'red', '', 2, tag='sparx2')
+
+def init_sparx3():
+    """Affiche le troisième sparx"""
+    cercle(x3_sparx,y3_sparx,sparx_size,'red','',2,tag='sparx3')
 
 
 def init_qix():
@@ -181,7 +189,7 @@ def init_game(choix_jeu):
     init_pomme()
     if choix_jeu=="Difficile":
         init_qix2()
-
+        init_sparx3()
 
 def main():
     """Permet de lancer le début du jeu"""
@@ -316,6 +324,15 @@ def turn_sparx(dir_sparx1: str, dir_sparx2: str):
         pass
     return dir_sparx1, dir_sparx2
 
+def turn_sparx3(dir_sparx3: str, ):
+    """Choisi et renvoie aléatoirement une direction que peut prendre le sparx sur le circuit"""
+    lst_dir_3 = choose_dir(dir_sparx3)
+    lst_dir_dispo_3 = test_turn_sparx(lst_dir_3, x3_sparx, y3_sparx, 1)
+    try:
+        dir_sparx3 = choice(lst_dir_dispo_3)
+    except:
+        pass
+    return dir_sparx3
 
 def dep_qix(x_qix: int, y_qix: int, num_qix: int):
     """Test et renvoi les coordonnées de déplacement du qix en restant dans l'air du circuit"""
@@ -382,7 +399,7 @@ def dessin_ligne(x, y):
 
 
 def reset():
-    global x_qix, y_qix, x_player, y_player, x1_sparx, y1_sparx, x2_sparx, y2_sparx, touche_entree, touche_espace, speed_player, dir_sparx1, dir_sparx2, direction, invincible
+    global x_qix, y_qix, x_player, y_player, x1_sparx, y1_sparx, x2_sparx, y2_sparx, touche_entree, touche_espace, speed_player, dir_sparx1, dir_sparx2, direction, invincible,x3_sparx,y3_sparx,dir_sparx3,x_qix2,y_qix2
     touche_entree = 0 
     touche_espace = 0   # permet de remettre la vitesse initiale du joueur
     speed_player = 5
@@ -396,6 +413,11 @@ def reset():
     y1_sparx = circuitY1    # ordonnée du sparx 1
     x2_sparx = x1_sparx     
     y2_sparx = y1_sparx
+    x3_sparx=15
+    y3_sparx=300
+    x_qix2=200
+    y_qix2=200
+    dir_sparx3="bas"
     dir_sparx1 = 'droite'
     dir_sparx2 = 'gauche'
     efface('ligne')
@@ -533,10 +555,10 @@ if __name__ == "__main__":
         #### Déplacement des sparx ####
         if temps % 5 == 0 and (on_circuit_sparx(dir_sparx1, x1_sparx, y1_sparx, 1) or on_circuit_sparx(dir_sparx2, x2_sparx, y2_sparx, 2)):      # si les sparxs sont sur le circuit, les faires se déplacer
             dir_sparx1, dir_sparx2 = turn_sparx(dir_sparx1, dir_sparx2)
-            
+                
             x1_sparx, y1_sparx = dep_sparx(dir_sparx1, x1_sparx, y1_sparx, 1)
             x2_sparx, y2_sparx = dep_sparx(dir_sparx2, x2_sparx, y2_sparx, 2)
-            
+                
         elif temps % 5 == 0:
             x1_sparx, y1_sparx = dim_fenetre // 2, circuitY1
             x2_sparx, y2_sparx = x1_sparx, y1_sparx
@@ -549,6 +571,16 @@ if __name__ == "__main__":
         init_qix()
 
         if choix_jeu == 'Difficile':
+            if temps % 5 == 0 and (on_circuit_sparx(dir_sparx3, x3_sparx, y3_sparx, 3)):      # si les sparxs sont sur le circuit, les faires se déplacer
+                dir_sparx3 = turn_sparx3(dir_sparx3)
+                    
+                x3_sparx, y3_sparx = dep_sparx(dir_sparx3, x3_sparx, y3_sparx, 3)     
+            elif temps % 5 == 0:
+                x3_sparx=15
+                y3_sparx=300
+                dir_sparx3="bas"
+            init_sparx3()
+
             x_qix2,y_qix2=dep_qix(x_qix2,y_qix2,2)
             init_qix2()
 
