@@ -74,9 +74,20 @@ duree_invincibilite = 3
 def ready():
     """Affiche le texte de départ"""
     texte(
-        dim_fenetre // 2, dim_fenetre // 2,
-        "Tapez sur une touche !", "red", "center",
-        tag='texte'
+        dim_fenetre // 2, dim_fenetre // 3,
+        "Voici les commandes : \n \n\
+            - Les flèches directionnelles pour se déplacer \n \n\
+            - Presser la touche Enter puis rentrer \n\
+            dans l'air (flèches) pour dessiner \n \n\
+            - Touche Space pendant le dessin \n\
+            pour accélerer \n \n \n\
+            (Appuyer sur une touche pour commencer \n\
+            à jouer)", 
+        "white", "center", taille=18, tag='texte'
+    )
+    texte(
+        dim_fenetre // 2, dim_fenetre // 1.2,
+        "Good luck !", "green", "center", taille=26, tag='texte'
     )
     attend_ev()
     efface('texte')
@@ -84,7 +95,7 @@ def ready():
 
 def ecriture_menu():
     """Affiche les case du menu"""
-    texte(300, 200, "Qix Basique", "red", "center", tag='qix_basique')
+    texte(300, 200, "Qix Basique", "white", "center", tag='qix_basique')
     rectangle(200, 150, 400, 250, "blue", tag='rectangle1')
     texte(300, 400, "Qix Difficile", "red", "center", tag='qix_difficile')
     rectangle(200, 350, 400, 450, "blue", tag='rectangle1')
@@ -382,7 +393,6 @@ def coin_manquant(coords_poly: list):
     """Renvoie le coin manquant du polygone (seulement les 4 coins du circuit)"""
     x_debut, y_debut = coords_poly[0]
     x_fin, y_fin = coords_poly[-1]
-    print(x_debut, y_debut, x_fin, y_fin)
     if (x_fin == circuitX2 and y_debut == circuitY2) or (x_debut == circuitX2 and y_fin == circuitY2):       # coin inférieur droit
         coords_poly.append((circuitX2, circuitY2))
     elif (x_fin == circuitX1 and y_debut == circuitY2) or (x_debut == circuitX1 and y_fin == circuitY2):     # coin inférieur gauche
