@@ -46,8 +46,7 @@ midle_qix = 30
 x_qix2=200
 y_qix2=200
 
-x_qix3=400
-y_qix3=400
+
 
 # Texte du jeu
 text_life = 'Vie restante'
@@ -491,7 +490,7 @@ if __name__ == "__main__":
         init_qix()
         
         if choix_jeu=="Difficile":
-            x_qix2,y_qix2=dep_qix(x_qix,y_qix2,2)
+            x_qix2,y_qix2=dep_qix(x_qix2,y_qix2,2)
             init_qix2()
 
         #### Dessins ####
