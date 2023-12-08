@@ -6,6 +6,9 @@ Le code réalisé par Alexis :
     - les collisions entre adversaires/joueur(+ perte de vie,réinitialisation des positions du joueur,sparx,qix)
     - les textes et image affichés pendant le jeu (Qix, vie, image du Qix)
 Update rendu 2: 
+    -Refait toutes les collisions
+    -Fait le bonus de pomme+ Invincible
+    
 
 Le code réalisé par Julien : 
 
