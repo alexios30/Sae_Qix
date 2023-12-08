@@ -44,3 +44,11 @@ IV. Les bonus
 
 Nous avons essayé de trouver, sans succès, la condition qui permettait de faire tester les déplacements des sparx dans les direction perpendiculaire à celle actuelle et ainsi donner la possibilité aux sparx de circuler sur les polygones dessinés par le joueur.
 À l'inverse, nous avons réussi à implémenter une apparition d'obstacles sur le passage du joueur, de coordonnées aléatoires et ceux pour chaque point de vie perdu. Cependant, la condition manquante se trouve être celle qui teste (en plus de tous les segments) s'il y a sur le passage un osbtacle et auquel cas un arrêt se marque du joueur (et même plus car il se retrouve bloqué : nous avons pensé à réinitialiser la variable orientation en None mais le joueur aurait pu repartir dans la même direction par la suite).
+
+Second Rendu:
+
+Pour ce deuxième rendu, nous avons décidé de recommencer à 0 les déplacements du joueur car nous avons beaucoup trop de latence dans notre jeu ce qui le rendait pas très amusant.Nous avons donc réussi à mieux optimiser le déplacement du joueur pour le rendre beaucoup plus fluide et plus agréable à jouer.Nous avons aussi décidé de revoir les déplacments du Qix, qui lui aussi rendait le jeu pas fluide.Nous sommes donc repartit de quasi rien et avons tout refait.
+
+V.Variante
+
+Pour commencer, nous avons commencer par la variante sparx interne car nous avons refait le déplacement des sparxs.Pour effectuer ceci, nous avons donc décidé que les sparxs puisse vérifier à chaque déplacement si ils peuvent faire haut,bas,droite, gauche et que si il y a un polygone déssiné, ils  puissent le choisir comme direction.Après, nous avons récupéré la variante sparx 
