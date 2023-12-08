@@ -8,7 +8,7 @@ Le code réalisé par Alexis :
 Update rendu 2: 
     -Refait toutes les collisions
     -Fait le bonus de pomme+ Invincible
-    
+    -Refait la fonction qui reintisalise tout
 
 Le code réalisé par Julien : 
 
