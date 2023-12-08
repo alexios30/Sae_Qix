@@ -9,6 +9,9 @@ from random import *
 # Fenêtre 
 dim_fenetre = 600
 
+##### Mode de jeu choisit #####
+choix_jeu = None
+
 
 # Circuit
 esp_circuit = 15
@@ -36,12 +39,11 @@ dir_sparx1 = 'droite'
 x2_sparx = x1_sparx     # abscisse du sparx 2
 y2_sparx = y1_sparx     # ordonnée du sparx 2
 dir_sparx2 = 'gauche'
+x3_sparx = circuitX1
+y3_sparx = circuitY1
+dir_sparx3 = dir_sparx1
 
-x3_sparx=15
-y3_sparx=300
-dir_sparx3="bas"
-
-
+ 
 # Qix
 x_qix = dim_fenetre // 2
 y_qix = x_qix
@@ -58,7 +60,7 @@ text_life = 'Vie restante'
 nb_obstacles = 0
 
 # Pomme
-pomme_size=25
+pomme_size=30
 pommes = []
 
 # Invincibilité 
@@ -80,27 +82,34 @@ def ready():
     efface('texte')
 
 
-def ecriture():
-    choix_jeu=None
-    texte(300, 200,"Qix Basique", "red", "center",tag='qix_basique')
-    rectangle(200,150,400,250,"blue",tag='rectangle1')
-    texte(300, 400,"Qix Difficile", "red", "center",tag='qix_difficile')
-    rectangle(200,350,400,450,"blue",tag='rectangle1')
+def ecriture_menu():
+    """Affiche les case du menu"""
+    texte(300, 200, "Qix Basique", "red", "center", tag='qix_basique')
+    rectangle(200, 150, 400, 250, "blue", tag='rectangle1')
+    texte(300, 400, "Qix Difficile", "red", "center", tag='qix_difficile')
+    rectangle(200, 350, 400, 450, "blue", tag='rectangle1')
 
-    clicx,clicy=attend_clic_gauche()
-    if clicx>=200 and clicx<=400 and clicy>=150 and clicy<=250:
-        efface('rectangle1')
-        efface('qix_basique')
-        efface('qix_difficile')
-        choix_jeu='Basique'
-        return choix_jeu
-    
-    if clicx>=200 and clicx<=400 and clicy>=350 and clicy<=450:
-        efface('rectangle1')
-        efface('qix_basique')
-        efface('qix_difficile')
-        choix_jeu="Difficile"
-        return choix_jeu
+
+def menu():
+    """Renvoi le mode de jeu choisit après le clic"""
+    ecriture_menu()
+    valid = True
+    while valid:
+        clicx, clicy = attend_clic_gauche()
+        if clicx >= 200 and clicx <= 400 and clicy >= 150 and clicy <= 250:
+            efface('rectangle1')
+            efface('qix_basique')
+            efface('qix_difficile')
+            choix_jeu = 'Basique'
+            valid = False
+        
+        elif clicx >= 200 and clicx <= 400 and clicy >= 350 and clicy <= 450:
+            efface('rectangle1')
+            efface('qix_basique')
+            efface('qix_difficile')
+            choix_jeu = "Difficile"
+            valid = False
+    return choix_jeu
 
 
 def init_circuit():
@@ -117,19 +126,17 @@ def init_sparx():
     """Affiche les sparxs"""
     cercle(x1_sparx, y1_sparx, sparx_size, 'red', '', 2, tag='sparx1')
     cercle(x2_sparx, y2_sparx, sparx_size, 'red', '', 2, tag='sparx2')
-
-def init_sparx3():
-    """Affiche le troisième sparx"""
-    cercle(x3_sparx,y3_sparx,sparx_size,'red','',2,tag='sparx3')
+    if choix_jeu=='Difficile':
+        cercle(x3_sparx, y3_sparx, sparx_size, 'red', '', 2, tag='sparx3')
 
 
 def init_qix():
-    """Affiche le qix"""
+    """Affiche le premier qix"""
     image(x_qix,y_qix,'kong.png',largeur=60,hauteur=60,ancrage="center",tag='kong1')
 
 
 def init_qix2():
-    """Affiche le qix"""
+    """Affiche le qix numéro 2"""
     image(x_qix2, y_qix2, 'kong.png',largeur=60,hauteur=60,ancrage="center",tag='kong2')
 
 
@@ -156,6 +163,7 @@ def init_text_qix():
 
 
 def init_text_invincible():
+    """Affiche le texte `Invincible`"""
     texte_invincible="Invincible"
     size_invicible=17
     texte(60,50,texte_invincible,'green',taille=size_invicible,ancrage='center',tag="Invincible")
@@ -174,7 +182,7 @@ def init_pomme():
 
 
 def init_text():
-    """Affiche l'ensemble des textes"""
+    """Affiche l'ensemble des textes après lancement du jeu"""
     init_text_life()
     init_text_qix()
 
@@ -189,13 +197,13 @@ def init_game(choix_jeu):
     init_pomme()
     if choix_jeu=="Difficile":
         init_qix2()
-        init_sparx3()
+
 
 def main():
     """Permet de lancer le début du jeu"""
     cree_fenetre(dim_fenetre, dim_fenetre)
     rectangle(0, 0, dim_fenetre, dim_fenetre, 'black', 'black', tag="background")
-    choix_jeu=ecriture()
+    choix_jeu = menu()
     return choix_jeu
 
 
@@ -215,13 +223,6 @@ def init_gameover():
     police ="Stencil"
     texte(300, 300, chaine, 'red', 'center', police, size, 'Game Over')
 
-
-def quitte():
-    ev = donne_ev()
-    t_ev = type_ev(ev)
-    if t_ev == 'Touche':
-        return True
-    return False
 
 ##### Fonctions du jeu #####
 
@@ -307,32 +308,16 @@ def test_turn_sparx(lst_directions: list, x_sparx: int, y_sparx: int, num_sparx:
     return lst_dispo
 
 
-def turn_sparx(dir_sparx1: str, dir_sparx2: str):
+def turn_sparx(dir_sparx: str, x_sparx: int, y_sparx: int, num_sparx: int):
     """Choisi et renvoie aléatoirement une direction que peut prendre le sparx sur le circuit"""
-    lst_dir_1 = choose_dir(dir_sparx1)
-    lst_dir_dispo_1 = test_turn_sparx(lst_dir_1, x1_sparx, y1_sparx, 1)
+    lst_dir = choose_dir(dir_sparx)
+    lst_dir_dispo = test_turn_sparx(lst_dir, x_sparx, y_sparx, num_sparx)
+    try:
+        dir_sparx = choice(lst_dir_dispo)
+    except:
+        pass
+    return dir_sparx
 
-    lst_dir_2 = choose_dir(dir_sparx2)
-    lst_dir_dispo_2 = test_turn_sparx(lst_dir_2, x2_sparx, y2_sparx, 2)
-    try:
-        dir_sparx1 = choice(lst_dir_dispo_1)
-    except:
-        pass
-    try:
-        dir_sparx2 = choice(lst_dir_dispo_2)
-    except:
-        pass
-    return dir_sparx1, dir_sparx2
-
-def turn_sparx3(dir_sparx3: str, ):
-    """Choisi et renvoie aléatoirement une direction que peut prendre le sparx sur le circuit"""
-    lst_dir_3 = choose_dir(dir_sparx3)
-    lst_dir_dispo_3 = test_turn_sparx(lst_dir_3, x3_sparx, y3_sparx, 1)
-    try:
-        dir_sparx3 = choice(lst_dir_dispo_3)
-    except:
-        pass
-    return dir_sparx3
 
 def dep_qix(x_qix: int, y_qix: int, num_qix: int):
     """Test et renvoi les coordonnées de déplacement du qix en restant dans l'air du circuit"""
@@ -393,19 +378,40 @@ def segments_par_coords() -> list[tuple]:
     return liste_total
 
 
+def coin_manquant(coords_poly: list):
+    """Renvoie le coin manquant du polygone (seulement les 4 coins du circuit)"""
+    x_debut, y_debut = coords_poly[0]
+    x_fin, y_fin = coords_poly[-1]
+    print(x_debut, y_debut, x_fin, y_fin)
+    if (x_fin == circuitX2 and y_debut == circuitY2) or (x_debut == circuitX2 and y_fin == circuitY2):       # coin inférieur droit
+        coords_poly.append((circuitX2, circuitY2))
+    elif (x_fin == circuitX1 and y_debut == circuitY2) or (x_debut == circuitX1 and y_fin == circuitY2):     # coin inférieur gauche
+        coords_poly.append((circuitX1, circuitY2))
+    if (x_fin == circuitX1 and y_debut == circuitY1) or (x_debut == circuitX1 and y_fin == circuitY1):      # coin supérieur gauche
+        coords_poly.append((circuitX1, circuitY1))
+    elif (x_fin == circuitX2 and y_debut == circuitY1) or (x_debut == circuitX2 and y_fin == circuitY1):       # coin supérieur droit
+        coords_poly.append((circuitX2, circuitY1))
+    else:
+        pass
+
+
 def dessin_ligne(x, y):
+    """Dessine une ligne avec ses coordonnées et celles futures"""
     test_x, test_y = dep_player(direction, x, y)
     ligne(x, y, test_x, test_y, 'white', tag='ligne')
 
 
 def reset():
-    global x_qix, y_qix, x_player, y_player, x1_sparx, y1_sparx, x2_sparx, y2_sparx, touche_entree, touche_espace, speed_player, dir_sparx1, dir_sparx2, direction, invincible,x3_sparx,y3_sparx,dir_sparx3,x_qix2,y_qix2
+    """Réinitialise toutes les variables de départ"""
+    global x_qix, y_qix, x_qix2, y_qix2, x_player, y_player, x1_sparx, y1_sparx, x2_sparx, y2_sparx, x3_sparx, y3_sparx, touche_entree, touche_espace, speed_player, dir_sparx1, dir_sparx2, dir_sparx3, direction, invincible
     touche_entree = 0 
     touche_espace = 0   # permet de remettre la vitesse initiale du joueur
     speed_player = 5
     invincible = False
     x_qix = 300
     y_qix = 300
+    x_qix2 = 200
+    y_qix2 = 200
     x_player = dim_fenetre // 2
     y_player = dim_fenetre - esp_circuit
     direction = None
@@ -413,31 +419,23 @@ def reset():
     y1_sparx = circuitY1    # ordonnée du sparx 1
     x2_sparx = x1_sparx     
     y2_sparx = y1_sparx
-    x3_sparx=15
-    y3_sparx=300
-    x_qix2=200
-    y_qix2=200
-    dir_sparx3="bas"
+    x3_sparx = circuitX1     
+    y3_sparx = circuitY1
     dir_sparx1 = 'droite'
     dir_sparx2 = 'gauche'
+    dir_sparx3 = dir_sparx1
     efface('ligne')
 
 ##### Collisions #####
 
 def collision_qix_player(x_qix: int, y_qix: int, x_player: int, y_player: int):
+    """True si le qix est en collision avec le joueur, False sinon"""
     distance = sqrt((x_qix - x_player) ** 2 + (y_qix - y_player) ** 2)
     return distance < player_size
 
 
 def intersection_ligne_qix(x_qix, y_qix, coords_ligne):
-    """
-    Vérifie si le Qix touche la ligne dessinée.
-    :param float x_qix: Coordonnée x du Qix.
-    :param float y_qix: Coordonnée y du Qix.
-    :param list[tuple[float, float]] coords_ligne: Coordonnées de la ligne.
-    :return: True si le Qix touche la ligne, sinon False.
-    """
-    global coords_poly
+    """True si le Qix touche la ligne de dessin du joueur, False sinon"""
     for i in range(len(coords_ligne) - 1):
         x1, y1 = coords_ligne[i]
         x2, y2 = coords_ligne[i + 1]
@@ -451,12 +449,14 @@ def intersection_ligne_qix(x_qix, y_qix, coords_ligne):
 
 
 def collision_sparx(x_sparx, y_sparx, x_player, y_player):
+    """True si le sparx est en collision avec le joueur, False sinon"""
     if sqrt((x_sparx - x_player) ** 2 + (y_sparx - y_player) ** 2)<= player_size:
         return True
     return False
 
 
 def collision_obstacles(lst_osbtacles, x_player, y_player):
+    """True si le joueur est en collision avec un obstacle, False sinon"""
     for i in lst_osbtacles:
         if sqrt((i[0] - x_player) ** 2 + (i[1] - y_player) ** 2)<= player_size:
             return True
@@ -464,6 +464,7 @@ def collision_obstacles(lst_osbtacles, x_player, y_player):
 
 
 def collision_joueur_pomme():
+    """Renvoie si le joueur est invincible et le temps restant lorsqu'il mange une pomme"""
     global pommes,invincible,temps_invincible
     for i in pommes[:]: 
         x_pomme, y_pomme, tag_pomme = i['x'], i['y'], i['tag']
@@ -478,7 +479,7 @@ def collision_joueur_pomme():
 ##### Obstacles #####
 
 def point_random_on_segment(segment):
-    """ Renvoi un point appartenant à un segment donné """
+    """Renvoie un point `(x, y)` appartenant à un segment donné"""
     x1, y1 = segment[0]
     x2, y2 = segment[1]
     x = uniform(min(x1, x2), max(x1, x2))
@@ -487,7 +488,7 @@ def point_random_on_segment(segment):
 
 
 def segment_random(liste_points):
-    """ Renvoi un point aléatoire appartenant au circuit entier """
+    """Renvoi un point `(x, y)` aléatoire appartenant au circuit entier"""
     if not liste_points:
         return None
     segment_choisi = choice(liste_points)
@@ -495,41 +496,17 @@ def segment_random(liste_points):
 
 
 def spawn_obstacle():
+    """Affiche et retourne les coordonnées `(x, y)` d'un obstacle appartenant à la liste de points"""
     x, y = segment_random(liste_points)
     init_obstacle(x, y, nb_obstacles)
     return x, y
 
 
-def intersection_lignes_presentes(
-        lignes: list,
-) -> bool:
-    """
-    Vérifie si les lignes que dessine le joueur s'intersectent.
-    :param list lignes: liste des lignes de dessins actuel
-    :return: True s'il y a une intersection, False sinon
-    """
-    for i in range(len(lignes) - 1):
-        ligne1 = lignes[i]
-        for j in range(i + 1, len(lignes)):
-            ligne2 = lignes[j]
-            x1, y1 = ligne1[0]
-            x2, y2 = ligne1[1]
-            x3, y3 = ligne2[0]
-            x4, y4 = ligne2[1]
-            det = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
-            if det == 0:
-                continue
-            intersection_x = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / det
-            intersection_y = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / det
-            if min(x1, x2) <= intersection_x <= max(x1, x2) and min(y1, y2) <= intersection_y <= max(y1, y2) and min(x3, x4) <= intersection_x <= max(x3, x4) and min(y3, y4) <= intersection_y <= max(y3, y4):
-                return True 
-    return False
 
 
 if __name__ == "__main__":
     choix_jeu = main()
     ready()
-    print(choix_jeu)
     init_game(choix_jeu)
 
     liste_points = segments_initiaux()      # liste des segments du circuit
@@ -548,17 +525,25 @@ if __name__ == "__main__":
             ferme_fenetre()
             break
 
+
         #### Déplacement du joueur ####
         if temps % speed_player == 0 and touche_entree == 0 and on_circuit_player(x_player, y_player):     # si joueur sur circuit, le faire déplacer
             x_player, y_player = dep_player(direction, x_player, y_player)
 
+
         #### Déplacement des sparx ####
         if temps % 5 == 0 and (on_circuit_sparx(dir_sparx1, x1_sparx, y1_sparx, 1) or on_circuit_sparx(dir_sparx2, x2_sparx, y2_sparx, 2)):      # si les sparxs sont sur le circuit, les faires se déplacer
-            dir_sparx1, dir_sparx2 = turn_sparx(dir_sparx1, dir_sparx2)
-                
+            
+            dir_sparx1 = turn_sparx(dir_sparx1, x1_sparx, y1_sparx, 1)
+            dir_sparx2 = turn_sparx(dir_sparx2, x2_sparx, y2_sparx, 2)
+            
             x1_sparx, y1_sparx = dep_sparx(dir_sparx1, x1_sparx, y1_sparx, 1)
             x2_sparx, y2_sparx = dep_sparx(dir_sparx2, x2_sparx, y2_sparx, 2)
-                
+
+            if choix_jeu == 'Difficile':
+                dir_sparx3 = turn_sparx(dir_sparx3, x3_sparx, y3_sparx, 3)
+                x3_sparx, y3_sparx = dep_sparx(dir_sparx3, x3_sparx, y3_sparx, 3)
+            
         elif temps % 5 == 0:
             x1_sparx, y1_sparx = dim_fenetre // 2, circuitY1
             x2_sparx, y2_sparx = x1_sparx, y1_sparx
@@ -566,21 +551,12 @@ if __name__ == "__main__":
             dir_sparx2 = 'gauche'
         init_sparx()    # affiche les sparxs après leur déplacement 
 
+
         #### Déplacement du qix ####
         x_qix, y_qix = dep_qix(x_qix, y_qix, 1)
         init_qix()
 
         if choix_jeu == 'Difficile':
-            if temps % 5 == 0 and (on_circuit_sparx(dir_sparx3, x3_sparx, y3_sparx, 3)):      # si les sparxs sont sur le circuit, les faires se déplacer
-                dir_sparx3 = turn_sparx3(dir_sparx3)
-                    
-                x3_sparx, y3_sparx = dep_sparx(dir_sparx3, x3_sparx, y3_sparx, 3)     
-            elif temps % 5 == 0:
-                x3_sparx=15
-                y3_sparx=300
-                dir_sparx3="bas"
-            init_sparx3()
-
             x_qix2,y_qix2=dep_qix(x_qix2,y_qix2,2)
             init_qix2()
 
@@ -603,6 +579,10 @@ if __name__ == "__main__":
 
                 coords_poly.append(tuple((x_player, y_player)))
 
+                ### fonction sur les coins
+                coin_manquant(coords_poly)
+
+
                 if touche_espace == 0:
                     polygone(coords_poly, 'white', 'green', tag='polygone')
                 else:
@@ -618,8 +598,6 @@ if __name__ == "__main__":
                 dessin_ligne(x_player, y_player)
                 x_player, y_player = dep_player(direction, x_player, y_player)
 
-        # if intersection_lignes_presentes(coords_poly):
-        #     print('oui')
 
         #### Collisions ####
         collision_joueur_pomme()
@@ -638,7 +616,8 @@ if __name__ == "__main__":
                 collision_qix_player(x_qix2, y_qix2, x_player, y_player) or \
                 intersection_ligne_qix(x_qix2, y_qix2, coords_poly) or \
                 collision_sparx(x1_sparx, y1_sparx, x_player, y_player) or \
-                collision_sparx(x2_sparx, y2_sparx, x_player, y_player):
+                collision_sparx(x2_sparx, y2_sparx, x_player, y_player) or \
+                collision_sparx(x3_sparx, y3_sparx, x_player, y_player):
 
                 life_player -= 1
                 coords_poly = []
@@ -649,6 +628,8 @@ if __name__ == "__main__":
             elif collision_obstacles(liste_osbtacles, x_player, y_player):
                 direction = None
 
+
+        ##### Obstacles #####
         if life_player == 2 and nb_obstacles == 0:
             liste_osbtacles.append(spawn_obstacle())
             nb_obstacles += 1
@@ -659,10 +640,6 @@ if __name__ == "__main__":
         
         if life_player == 0:
             init_gameover()
-            break
-
-        if quitte():    ## ne fonctionne pas ##
-            ferme_fenetre()
             break
 
         temps = temps + 1
