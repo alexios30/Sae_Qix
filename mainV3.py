@@ -32,7 +32,7 @@ speed_player = 5
 
 x_player2 =300
 y_player2 = 90
-direction2=None
+direction2 = None
 speed_player2 = 5
 
 # Sparx
@@ -274,13 +274,13 @@ def mise_a_jour_direction(direction: str):
     t_ev = type_ev(ev)
     if t_ev == "Touche":
         t = touche(ev)
-        if t == "Right" :
+        if t == "Right"or t=="d" :
             nouvelle_dir = 'droite'
-        elif t == "Left":
+        elif t == "Left" or t=="q":
             nouvelle_dir = 'gauche'
-        if t == "Up":
+        if t == "Up" or t=="z":
             nouvelle_dir = 'haut'
-        elif t == "Down":
+        elif t == "Down" or t=="s":
             nouvelle_dir = 'bas'
         if t == "Return":
             nouvelle_dir = 'entree'
@@ -290,28 +290,6 @@ def mise_a_jour_direction(direction: str):
             nouvelle_dir = 'echap'
     return nouvelle_dir
 
-def mise_a_jour_direction2(direction2: str):
-    """Renvoie la touche préssée (direction ou action)"""
-    nouvelle_dir = direction2
-    ev = donne_ev()
-    t_ev = type_ev(ev)
-    if t_ev == "Touche":
-        t = touche(ev)
-        if  t=="d":
-            nouvelle_dir = 'droite'
-        elif  t=="q":
-            nouvelle_dir = 'gauche'
-        if  t=="z":
-            nouvelle_dir = 'haut'
-        elif t=="s":
-            nouvelle_dir = 'bas'
-        if t == "Return":
-            nouvelle_dir = 'entree'
-        if t == "space":
-            nouvelle_dir = 'espace'
-        elif t == "Escape":
-            nouvelle_dir = 'echap'
-    return nouvelle_dir
 
 def init_deplace(direction: str, x: int, y: int):
     """Renvoie les coordonnées comprises dans l'air du circuit après déplacement dans la direction donnée"""
@@ -325,6 +303,19 @@ def init_deplace(direction: str, x: int, y: int):
         y += dep
     return x, y
 
+def init_deplace2(direction2: str, x: int, y: int):
+    """Renvoie les coordonnées comprises dans l'air du circuit après déplacement dans la direction donnée"""
+    if direction2 == 'droite' and x < circuitX2:
+        x += dep
+    elif direction2 == 'gauche' and x > circuitX1:
+        x -= dep
+    elif direction2 == 'haut' and y > circuitY1:
+        y -= dep
+    elif direction2 == 'bas' and y < circuitY2:
+        y += dep
+    return x, y
+
+
 
 def dep_player(direction: str, x_player: int ,y_player: int):
     """Déplace le joueur en lui affectant ses nouvelles coordonnées"""
@@ -336,7 +327,7 @@ def dep_player(direction: str, x_player: int ,y_player: int):
 def dep_player2(direction2: str, x_player2: int ,y_player2: int):
     """Déplace le joueur en lui affectant ses nouvelles coordonnées"""
     efface('player2')
-    x_player2, y_player2 = init_deplace(direction2, x_player2, y_player2)
+    x_player2, y_player2 = init_deplace2(direction2, x_player2, y_player2)
     init_player2()
     return x_player2, y_player2
 
@@ -595,10 +586,9 @@ if __name__ == "__main__":
 
     while True:
         old_direction = direction   # enregistre l'ancienne direction avant MAJ
-        direction = mise_a_jour_direction(direction)
-
         old_direction2 = direction2   # enregistre l'ancienne direction avant MAJ
-        direction2 = mise_a_jour_direction2(direction2)
+        direction = mise_a_jour_direction(direction)
+        direction2 = mise_a_jour_direction(direction2)
         
         if direction == 'echap':
             ferme_fenetre()
@@ -676,6 +666,8 @@ if __name__ == "__main__":
             else:
                 dessin_ligne(x_player, y_player)
                 x_player, y_player = dep_player(direction, x_player, y_player)
+
+        
 
         #### Collisions ####
         collision_joueur_pomme()
