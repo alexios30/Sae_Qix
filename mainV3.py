@@ -32,7 +32,8 @@ speed_player = 5
 
 x_player2 =300
 y_player2 = 90
-
+direction2=None
+speed_player2 = 5
 
 # Sparx
 sparx_size = player_size
@@ -105,7 +106,7 @@ def ecriture_menu():
     texte(300, 300, "Qix Difficile", "red", "center", tag='qix_difficile')
     rectangle(200, 250, 400, 350, "blue", tag='rectangle1')
 
-    texte(300, 500, "Versus", "white", "center", tag='versus')
+    texte(300, 500, "Versus", "purple", "center", tag='versus')
     rectangle(200, 450, 400,550, "blue", tag='rectangle1')
 
 
@@ -224,14 +225,16 @@ def init_game(choix_jeu):
     """Affiche tout le jeu"""
     init_circuit()
     init_player()
-    init_sparx()
     init_text()
+    init_sparx()
     init_qix()
-    init_pomme()
-    if choix_jeu=="Difficile":
-        init_qix2()
     if choix_jeu=="Versus":
         init_player2()
+    else:
+        init_pomme()
+        if choix_jeu=="Difficile":
+            init_qix2()
+
         
 
 
@@ -271,13 +274,13 @@ def mise_a_jour_direction(direction: str):
     t_ev = type_ev(ev)
     if t_ev == "Touche":
         t = touche(ev)
-        if t == "Right" or t=="d":
+        if t == "Right" :
             nouvelle_dir = 'droite'
-        elif t == "Left" or t=="q":
+        elif t == "Left":
             nouvelle_dir = 'gauche'
-        if t == "Up" or t=="z":
+        if t == "Up":
             nouvelle_dir = 'haut'
-        elif t == "Down" or t=="s":
+        elif t == "Down":
             nouvelle_dir = 'bas'
         if t == "Return":
             nouvelle_dir = 'entree'
@@ -287,7 +290,28 @@ def mise_a_jour_direction(direction: str):
             nouvelle_dir = 'echap'
     return nouvelle_dir
 
-
+def mise_a_jour_direction2(direction2: str):
+    """Renvoie la touche préssée (direction ou action)"""
+    nouvelle_dir = direction2
+    ev = donne_ev()
+    t_ev = type_ev(ev)
+    if t_ev == "Touche":
+        t = touche(ev)
+        if  t=="d":
+            nouvelle_dir = 'droite'
+        elif  t=="q":
+            nouvelle_dir = 'gauche'
+        if  t=="z":
+            nouvelle_dir = 'haut'
+        elif t=="s":
+            nouvelle_dir = 'bas'
+        if t == "Return":
+            nouvelle_dir = 'entree'
+        if t == "space":
+            nouvelle_dir = 'espace'
+        elif t == "Escape":
+            nouvelle_dir = 'echap'
+    return nouvelle_dir
 
 def init_deplace(direction: str, x: int, y: int):
     """Renvoie les coordonnées comprises dans l'air du circuit après déplacement dans la direction donnée"""
@@ -309,6 +333,12 @@ def dep_player(direction: str, x_player: int ,y_player: int):
     init_player()
     return x_player, y_player
 
+def dep_player2(direction2: str, x_player2: int ,y_player2: int):
+    """Déplace le joueur en lui affectant ses nouvelles coordonnées"""
+    efface('player2')
+    x_player2, y_player2 = init_deplace(direction2, x_player2, y_player2)
+    init_player2()
+    return x_player2, y_player2
 
 def dep_sparx(dir_sparx: str, x_sparx: int, y_sparx: int, num_sparx: int):
     """Déplace le sparx en lui affectant ses nouvelles coordonnées"""
@@ -548,13 +578,24 @@ if __name__ == "__main__":
     coords_poly = []        # liste des coordonnées du futur polygone à dessiner
     liste_osbtacles = []        # liste des coordonnées des osbtacles
 
+
+    liste_points2 = segments_initiaux()      # liste des segments du circuit
+    coords_poly2 = []        # liste des coordonnées du futur polygone à dessiner
+    liste_osbtacles2 = []        # liste des coordonnées des osbtacles
+
     temps = 0
     touche_entree = 0       # touche qui permet le dessin
     touche_espace = 0       # touche qui permet l'accélération du joueur
 
+    touche_entree2 = 0       # touche qui permet le dessin
+    touche_espace2 = 0       # touche qui permet l'accélération du joueur
+
     while True:
         old_direction = direction   # enregistre l'ancienne direction avant MAJ
         direction = mise_a_jour_direction(direction)
+
+        old_direction2 = direction2   # enregistre l'ancienne direction avant MAJ
+        direction2 = mise_a_jour_direction2(direction2)
 
         if direction == 'echap':
             ferme_fenetre()
@@ -564,7 +605,9 @@ if __name__ == "__main__":
         #### Déplacement du joueur ####
         if temps % speed_player == 0 and touche_entree == 0 and on_circuit_player(x_player, y_player):     # si joueur sur circuit, le faire déplacer
             x_player, y_player = dep_player(direction, x_player, y_player)
-
+    
+        if temps % speed_player2 == 0 and touche_entree2 == 0 and on_circuit_player(x_player2, y_player2):     # si joueur sur circuit, le faire déplacer
+            x_player2, y_player2 = dep_player2(direction2, x_player2, y_player2)
 
         #### Déplacement des sparx ####
         if temps % 5 == 0 and (on_circuit_sparx(dir_sparx1, x1_sparx, y1_sparx, 1) or on_circuit_sparx(dir_sparx2, x2_sparx, y2_sparx, 2)):      # si les sparxs sont sur le circuit, les faires se déplacer
@@ -632,7 +675,6 @@ if __name__ == "__main__":
             else:
                 dessin_ligne(x_player, y_player)
                 x_player, y_player = dep_player(direction, x_player, y_player)
-
 
         #### Collisions ####
         collision_joueur_pomme()
