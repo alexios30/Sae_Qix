@@ -424,6 +424,14 @@ def on_circuit_player(x: int, y: int):
             return True
     return False
 
+def on_circuit_player2(x: int, y: int):
+    """Renvoie True si les coordonnées du joueur se trouvent sur le circuit, False sinon"""
+    test_x, test_y = dep_player2(direction2, x, y)
+    for i in liste_points:
+        xA, yA, xB, yB = i[0][0], i[0][1], i[1][0], i[1][1]
+        if ((xA == xB == test_x and yA <= test_y <= yB) or (xA == xB == test_x and yB <= test_y <= yA)) or ((yA == yB == test_y and xA <= test_x <= xB) or (yA == yB == test_y and xB <= test_x <= xA)):
+            return True
+    return False
 
 def on_circuit_sparx(dir_sparx: str, x: int, y: int, num_sparx: int):
     """Renvoie True si les coordonnées du sparx se trouvent sur le circuit, False sinon"""
@@ -578,11 +586,6 @@ if __name__ == "__main__":
     coords_poly = []        # liste des coordonnées du futur polygone à dessiner
     liste_osbtacles = []        # liste des coordonnées des osbtacles
 
-
-    liste_points2 = segments_initiaux()      # liste des segments du circuit
-    coords_poly2 = []        # liste des coordonnées du futur polygone à dessiner
-    liste_osbtacles2 = []        # liste des coordonnées des osbtacles
-
     temps = 0
     touche_entree = 0       # touche qui permet le dessin
     touche_espace = 0       # touche qui permet l'accélération du joueur
@@ -596,19 +599,17 @@ if __name__ == "__main__":
 
         old_direction2 = direction2   # enregistre l'ancienne direction avant MAJ
         direction2 = mise_a_jour_direction2(direction2)
-
+        
         if direction == 'echap':
             ferme_fenetre()
             break
-
-
         #### Déplacement du joueur ####
         if temps % speed_player == 0 and touche_entree == 0 and on_circuit_player(x_player, y_player):     # si joueur sur circuit, le faire déplacer
             x_player, y_player = dep_player(direction, x_player, y_player)
+        if choix_jeu=="Versus":
+            if temps % speed_player2 == 0 and touche_entree2 == 0 and on_circuit_player2(x_player2, y_player2):     # si joueur sur circuit, le faire déplacer
+                x_player2, y_player2 = dep_player2(direction2, x_player2, y_player2)
     
-        if temps % speed_player2 == 0 and touche_entree2 == 0 and on_circuit_player(x_player2, y_player2):     # si joueur sur circuit, le faire déplacer
-            x_player2, y_player2 = dep_player2(direction2, x_player2, y_player2)
-
         #### Déplacement des sparx ####
         if temps % 5 == 0 and (on_circuit_sparx(dir_sparx1, x1_sparx, y1_sparx, 1) or on_circuit_sparx(dir_sparx2, x2_sparx, y2_sparx, 2)):      # si les sparxs sont sur le circuit, les faires se déplacer
             
