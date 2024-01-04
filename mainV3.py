@@ -30,6 +30,9 @@ dep = 5
 life_player = 3
 speed_player = 5
 
+x_player2 =300
+y_player2 = 90
+
 
 # Sparx
 sparx_size = player_size
@@ -96,10 +99,14 @@ def ready():
 
 def ecriture_menu():
     """Affiche les case du menu"""
-    texte(300, 200, "Qix Basique", "white", "center", tag='qix_basique')
-    rectangle(200, 150, 400, 250, "blue", tag='rectangle1')
-    texte(300, 400, "Qix Difficile", "red", "center", tag='qix_difficile')
-    rectangle(200, 350, 400, 450, "blue", tag='rectangle1')
+    texte(300, 100, "Qix Basique", "white", "center", tag='qix_basique')
+    rectangle(200, 50, 400, 150, "blue", tag='rectangle1')
+
+    texte(300, 300, "Qix Difficile", "red", "center", tag='qix_difficile')
+    rectangle(200, 250, 400, 350, "blue", tag='rectangle1')
+
+    texte(300, 500, "Versus", "white", "center", tag='versus')
+    rectangle(200, 450, 400,550, "blue", tag='rectangle1')
 
 
 def menu():
@@ -108,18 +115,28 @@ def menu():
     valid = True
     while valid:
         clicx, clicy = attend_clic_gauche()
-        if clicx >= 200 and clicx <= 400 and clicy >= 150 and clicy <= 250:
+        if clicx >= 200 and clicx <= 400 and clicy >= 50 and clicy <= 150:
             efface('rectangle1')
             efface('qix_basique')
             efface('qix_difficile')
+            efface('versus')
             choix_jeu = 'Basique'
             valid = False
         
-        elif clicx >= 200 and clicx <= 400 and clicy >= 350 and clicy <= 450:
+        elif clicx >= 200 and clicx <= 400 and clicy >= 250 and clicy <= 350:
             efface('rectangle1')
             efface('qix_basique')
             efface('qix_difficile')
+            efface('versus')
             choix_jeu = "Difficile"
+            valid = False
+
+        elif clicx >= 200 and clicx <= 400 and clicy >= 450 and clicy <= 550:
+            efface('rectangle1')
+            efface('qix_basique')
+            efface('qix_difficile')
+            efface('versus')
+            choix_jeu = "Versus"
             valid = False
     return choix_jeu
 
@@ -133,6 +150,10 @@ def init_player():
     """Affiche le joueur"""
     cercle(x_player, y_player, player_size, 'yellow', '', 2, tag='player')
 
+def init_player2():
+    """Affiche le 2 eme joueur"""
+    cercle(x_player2, y_player2, player_size, 'yellow', '', 2, tag='player2')
+
 
 def init_sparx():
     """Affiche les sparxs"""
@@ -144,12 +165,12 @@ def init_sparx():
 
 def init_qix():
     """Affiche le premier qix"""
-    image(x_qix,y_qix,'./Images/kong.png',largeur=60,hauteur=60,ancrage="center",tag='kong1')
+    image(x_qix,y_qix,'kong.png',largeur=60,hauteur=60,ancrage="center",tag='kong1')
 
 
 def init_qix2():
     """Affiche le qix numéro 2"""
-    image(x_qix2, y_qix2, './Images/kong.png',largeur=60,hauteur=60,ancrage="center",tag='kong2')
+    image(x_qix2, y_qix2, 'kong.png',largeur=60,hauteur=60,ancrage="center",tag='kong2')
 
 
 def init_life(life_player: int):
@@ -189,7 +210,7 @@ def init_pomme():
         x_pomme = randint(circuitX1 + 1, dim_fenetre-(circuitX1+1))
         y_pomme = randint(circuitY1 + 1, dim_fenetre-(circuitX1+1))
         tag_pomme = f'{nom}_{i}'
-        image(x_pomme, y_pomme, './Images/pomme.png', largeur=pomme_size, hauteur=pomme_size, ancrage='center', tag=tag_pomme)
+        image(x_pomme, y_pomme, 'pomme.png', largeur=pomme_size, hauteur=pomme_size, ancrage='center', tag=tag_pomme)
         pommes.append({'x': x_pomme, 'y': y_pomme, 'tag': tag_pomme})
 
 
@@ -209,6 +230,9 @@ def init_game(choix_jeu):
     init_pomme()
     if choix_jeu=="Difficile":
         init_qix2()
+    if choix_jeu=="Versus":
+        init_player2()
+        
 
 
 def main():
@@ -247,13 +271,13 @@ def mise_a_jour_direction(direction: str):
     t_ev = type_ev(ev)
     if t_ev == "Touche":
         t = touche(ev)
-        if t == "Right":
+        if t == "Right" or t=="d":
             nouvelle_dir = 'droite'
-        elif t == "Left":
+        elif t == "Left" or t=="q":
             nouvelle_dir = 'gauche'
-        if t == "Up":
+        if t == "Up" or t=="z":
             nouvelle_dir = 'haut'
-        elif t == "Down":
+        elif t == "Down" or t=="s":
             nouvelle_dir = 'bas'
         if t == "Return":
             nouvelle_dir = 'entree'
