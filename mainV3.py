@@ -813,6 +813,18 @@ if __name__ == "__main__":
                     efface("life2")
                     init_life(life_player)
                     init_life2(life_player2)
+                if intersection_ligne_qix(x_player, y_player, coords_poly2):
+                    life_player2 -= 1
+                    coords_poly2 = []
+                    reset()
+                    efface('life2')
+                    init_life2(life_player2)
+                if intersection_ligne_qix(x_player2, y_player2, coords_poly):
+                    life_player -= 1
+                    coords_poly = []
+                    reset()
+                    efface('life')
+                    init_life(life_player)
                     
             elif collision_obstacles(liste_osbtacles, x_player, y_player):
                 direction = None
