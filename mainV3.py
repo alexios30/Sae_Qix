@@ -30,10 +30,11 @@ dep = 5
 life_player = 3
 speed_player = 5
 
-x_player2 =300
-y_player2 = 90
+x_player2 = dim_fenetre - esp_circuit
+y_player2 = dim_fenetre // 2
 direction2 = None
 speed_player2 = 5
+life_player2 = 3
 
 # Sparx
 sparx_size = player_size
@@ -153,7 +154,7 @@ def init_player():
 
 def init_player2():
     """Affiche le 2 eme joueur"""
-    cercle(x_player2, y_player2, player_size, 'yellow', '', 2, tag='player2')
+    cercle(x_player2, y_player2, player_size, 'purple', '', 2, tag='player2')
 
 
 def init_sparx():
@@ -178,16 +179,27 @@ def init_life(life_player: int):
     """Affiche le nombre de vie"""
     chaine = str(life_player)
     size_life = 17
-    texte(570, 10, chaine, 'red', taille=size_life, tag='life')
+    texte(570, 10, chaine, 'yellow', taille=size_life, tag='life')
 
+def init_life2(life_player2: int):
+    """Affiche le nombre de vie"""
+    chaine = str(life_player2)
+    size_life = 17
+    texte(175, 10, chaine, 'yellow', taille=size_life, tag='life2')
 
 def init_text_life():
     """Affiche le texte `Vie restante`"""
-    text_life = 'Vie restante :'
+    text_life = 'Vie Joueur 1:'
     size__text_life = 17
     texte(430, 10, text_life, 'red', taille=size__text_life, tag='text_life')
     init_life(life_player)
 
+def init_text_life2():
+    """Affiche le texte `Vie restante`"""
+    text_life = 'Vie Joueur 2 :'
+    size__text_life = 17
+    texte(30, 10, text_life, 'red', taille=size__text_life, tag='text_life')
+    init_life2(life_player2)
 
 def init_text_qix():
     """Affiche le texte `Qix`"""
@@ -230,6 +242,7 @@ def init_game(choix_jeu):
     init_qix()
     if choix_jeu=="Versus":
         init_player2()
+        init_text_life2()
     else:
         init_pomme()
         if choix_jeu=="Difficile":
@@ -267,28 +280,41 @@ def init_gameover():
 
 ##### Les déplacements #####
 
-def mise_a_jour_direction(direction: str):
+def mise_a_jour_direction(direction: str, direction2:str):
     """Renvoie la touche préssée (direction ou action)"""
     nouvelle_dir = direction
+    nouvelle_dir2 = direction2
     ev = donne_ev()
     t_ev = type_ev(ev)
     if t_ev == "Touche":
         t = touche(ev)
-        if t == "Right"or t=="d" :
+        if t == "Right" :
             nouvelle_dir = 'droite'
-        elif t == "Left" or t=="q":
+        elif t == "Left":
             nouvelle_dir = 'gauche'
-        if t == "Up" or t=="z":
+        if t == "Up" :
             nouvelle_dir = 'haut'
-        elif t == "Down" or t=="s":
+        elif t == "Down" :
             nouvelle_dir = 'bas'
+        if t =="d" :
+            nouvelle_dir2 = 'droite'
+        elif t == "q":
+            nouvelle_dir2 = 'gauche'
+        if t == "z" :
+            nouvelle_dir2 = 'haut'
+        elif t == "s" :
+            nouvelle_dir2 = 'bas'
         if t == "Return":
             nouvelle_dir = 'entree'
+        if t=="f":
+            nouvelle_dir2= 'entree'
         if t == "space":
             nouvelle_dir = 'espace'
+        if t=='x':
+            nouvelle_dir2= 'espace'
         elif t == "Escape":
             nouvelle_dir = 'echap'
-    return nouvelle_dir
+    return nouvelle_dir,nouvelle_dir2
 
 
 def init_deplace(direction: str, x: int, y: int):
@@ -464,13 +490,20 @@ def dessin_ligne(x, y):
     test_x, test_y = dep_player(direction, x, y)
     ligne(x, y, test_x, test_y, 'white', tag='ligne')
 
+def dessin_ligne2(x, y):
+    """Dessine une ligne avec ses coordonnées et celles futures"""
+    test_x, test_y = dep_player(direction2, x, y)
+    ligne(x, y, test_x, test_y, 'white', tag='ligne2')
 
 def reset():
     """Réinitialise toutes les variables de départ"""
-    global x_qix, y_qix, x_qix2, y_qix2, x_player, y_player, x1_sparx, y1_sparx, x2_sparx, y2_sparx, x3_sparx, y3_sparx, touche_entree, touche_espace, speed_player, dir_sparx1, dir_sparx2, dir_sparx3, direction, invincible
+    global x_qix, y_qix, x_qix2, y_qix2, x_player, y_player, x1_sparx, y1_sparx, x2_sparx, y2_sparx, x3_sparx, y3_sparx, touche_entree, touche_espace, speed_player, dir_sparx1, dir_sparx2, dir_sparx3, direction, invincible,touche_entree2,touche_espace2,speed_player2,x_player2,y_player2,direction2
     touche_entree = 0 
     touche_espace = 0   # permet de remettre la vitesse initiale du joueur
+    touche_entree2 = 0 
+    touche_espace2 = 0  
     speed_player = 5
+    speed_player2 = 5
     invincible = False
     x_qix = 300
     y_qix = 300
@@ -478,7 +511,10 @@ def reset():
     y_qix2 = 200
     x_player = dim_fenetre // 2
     y_player = dim_fenetre - esp_circuit
+    x_player2 =  dim_fenetre - esp_circuit
+    y_player2 =  dim_fenetre // 2
     direction = None
+    direction2 = None
     x1_sparx = dim_fenetre // 2     # abscisse du sparx 1
     y1_sparx = circuitY1    # ordonnée du sparx 1
     x2_sparx = x1_sparx     
@@ -489,6 +525,7 @@ def reset():
     dir_sparx2 = 'gauche'
     dir_sparx3 = dir_sparx1
     efface('ligne')
+    efface('ligne2')
 
 ##### Collisions #####
 
@@ -581,14 +618,15 @@ if __name__ == "__main__":
     touche_entree = 0       # touche qui permet le dessin
     touche_espace = 0       # touche qui permet l'accélération du joueur
 
+    coords_poly2 = []
     touche_entree2 = 0       # touche qui permet le dessin
     touche_espace2 = 0       # touche qui permet l'accélération du joueur
 
     while True:
         old_direction = direction   # enregistre l'ancienne direction avant MAJ
         old_direction2 = direction2   # enregistre l'ancienne direction avant MAJ
-        direction = mise_a_jour_direction(direction)
-        direction2 = mise_a_jour_direction(direction2)
+        direction, direction2 = mise_a_jour_direction(direction,direction2)
+
         
         if direction == 'echap':
             ferme_fenetre()
@@ -667,6 +705,42 @@ if __name__ == "__main__":
                 dessin_ligne(x_player, y_player)
                 x_player, y_player = dep_player(direction, x_player, y_player)
 
+        if choix_jeu=="Versus":       
+            if direction2 == 'entree':
+                touche_entree2 = 1
+
+            if touche_entree2 == 1 and old_direction2 != direction2:   # si changement de direction pendant le dessin
+                coords_poly2.append(tuple((x_player2, y_player2)))
+
+            if temps % speed_player2 == 0 and touche_entree2 == 1:   # si touche entrée pressée, le joueur se déplace dans l'air complète
+            
+                if direction2 == 'espace' and touche_espace2 == 0:
+                    speed_player2 //= 2
+                    touche_espace2 = 1
+
+                if on_circuit_player2(x_player2, y_player2):   # si joueur revient sur circuit, dessin du polygone et ajout des lignes au circuit
+                    x_player2, y_player2 = dep_player2(direction2, x_player2, y_player2)
+
+                    coords_poly2.append(tuple((x_player2, y_player2)))
+
+                    ### fonction sur les coins
+                    coin_manquant(coords_poly2)
+
+
+                    if touche_espace2 == 0:
+                        polygone(coords_poly2, 'white', 'white', tag='polygone')
+                    else:
+                        polygone(coords_poly2, 'white', 'orange', tag='polygone')
+                    liste_points.extend(segments_par_coords())
+                    coords_poly2 = []
+
+                    efface('ligne2')     # évite d'avoir les lignes dessinés en plus des lignes du polygone (qui sont les mêmes)
+                    touche_entree2 = 0   # permet de ressortir de la boucle 'entrée'
+                    touche_espace2 = 0   # permet de remettre la vitesse initiale du joueur
+                    speed_player2 = 5
+                else:
+                    dessin_ligne2(x_player2, y_player2)
+                    x_player2, y_player2 = dep_player2(direction2, x_player2, y_player2)
         
 
         #### Collisions ####
@@ -687,13 +761,25 @@ if __name__ == "__main__":
                 intersection_ligne_qix(x_qix2, y_qix2, coords_poly) or \
                 collision_sparx(x1_sparx, y1_sparx, x_player, y_player) or \
                 collision_sparx(x2_sparx, y2_sparx, x_player, y_player) or \
-                collision_sparx(x3_sparx, y3_sparx, x_player, y_player):
-
+                collision_sparx(x3_sparx, y3_sparx, x_player, y_player): 
                 life_player -= 1
                 coords_poly = []
                 reset()
                 efface('life')
                 init_life(life_player)
+
+            if choix_jeu=='Versus':
+                if collision_qix_player(x_qix, y_qix, x_player2, y_player2) or \
+                    intersection_ligne_qix(x_qix, y_qix, coords_poly2) or \
+                    collision_qix_player(x_qix2, y_qix2, x_player2, y_player2) or \
+                    intersection_ligne_qix(x_qix2, y_qix2, coords_poly2) or \
+                    collision_sparx(x1_sparx, y1_sparx, x_player2, y_player2) or \
+                    collision_sparx(x2_sparx, y2_sparx, x_player2, y_player2):
+                    life_player2 -= 1
+                    coords_poly2 = []
+                    reset()
+                    efface('life2')
+                    init_life2(life_player2)
 
             elif collision_obstacles(liste_osbtacles, x_player, y_player):
                 direction = None
