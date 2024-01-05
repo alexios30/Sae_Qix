@@ -1,0 +1,7 @@
+dim_fenetre=600
+player_size=8
+speed_player=5
+life_player=3
+speed_sparx=5
+vitesse_qix=0.5
+qix_size=60
