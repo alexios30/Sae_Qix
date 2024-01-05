@@ -275,6 +275,29 @@ def init_gameover():
     police ="Stencil"
     texte(300, 300, chaine, 'red', 'center', police, size, 'Game Over')
 
+def init_joueur1perdu():
+    """Fonction de fin de jeu s'il est perdu"""
+    efface('kong')
+    efface('sparx1')
+    efface('sparx2')
+    efface('player')
+    efface('player2')
+    chaine = 'JOUEUR 1 A PERDU'
+    size = 50
+    police ="Stencil"
+    texte(300, 300, chaine, 'red', 'center', police, size, 'Joueur1Perdu')
+
+def init_joueur2perdu():
+    """Fonction de fin de jeu s'il est perdu"""
+    efface('kong')
+    efface('sparx1')
+    efface('sparx2')
+    efface('player')
+    efface('player2')
+    chaine = 'JOUEUR 2 A PERDU'
+    size = 50
+    police ="Stencil"
+    texte(300, 300, chaine, 'red', 'center', police, size, 'Joueur2Perdu')
 
 ##### Fonctions du jeu #####
 
@@ -793,10 +816,17 @@ if __name__ == "__main__":
             liste_osbtacles.append(spawn_obstacle())
             nb_obstacles += 1
 
-        
-        if life_player == 0:
-            init_gameover()
-            break
+        if choix_jeu=="Basique"or choix_jeu=="Difficile":
+            if life_player == 0:
+                init_gameover()
+                break
+        if choix_jeu=="Versus":
+            if life_player==0:
+                init_joueur1perdu()
+                break
+            if life_player2==0:
+                init_joueur2perdu()
+                break
 
         temps = temps + 1
         mise_a_jour()
