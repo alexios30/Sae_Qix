@@ -803,7 +803,17 @@ if __name__ == "__main__":
                     reset()
                     efface('life2')
                     init_life2(life_player2)
-
+                if collision_sparx(x_player,y_player,x_player2,y_player2):
+                    life_player-=1
+                    life_player2-=1
+                    coords_poly = []                   
+                    coords_poly2 = [] 
+                    reset()
+                    efface('life')
+                    efface("life2")
+                    init_life(life_player)
+                    init_life2(life_player2)
+                    
             elif collision_obstacles(liste_osbtacles, x_player, y_player):
                 direction = None
 
