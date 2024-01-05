@@ -6,8 +6,36 @@ from random import *
 
 ##### Constante utilisées pour le jeu #####
 
+def extraction_dico_variables(fichier):
+    """Extrait un dictionnaire avec le nom de variable en clé 
+    et sa valeur en value depuis un fichier.txt"""
+    with open(fichier, 'r') as file:
+        dico = {}
+        for ligne in file:
+            nom_variable, valeur = ligne.strip().split("=")
+            dico[nom_variable] = valeur
+    return dico
+
+dico_variables = extraction_dico_variables("variables.txt")
+
 # Fenêtre 
-dim_fenetre = 600
+dim_fenetre = int(dico_variables["dim_fenetre"])
+demi_f = dim_fenetre//2
+f3 = dim_fenetre//3 
+f3_4 = dim_fenetre//3.4
+f4 = dim_fenetre//4
+f6 = dim_fenetre//6
+f7 = dim_fenetre//7
+f12 = dim_fenetre//12
+f1_5 = dim_fenetre//1.5
+f1_2 = dim_fenetre//1.2
+f10 = dim_fenetre//10
+f20 = dim_fenetre//20
+f30 = dim_fenetre//30
+f35 = dim_fenetre//35
+f60 = dim_fenetre//60
+size_write_menu = dim_fenetre//25
+
 
 ##### Mode de jeu choisit #####
 choix_jeu = None
@@ -16,29 +44,29 @@ choix_jeu = None
 # Circuit
 esp_circuit = 15
 circuitX1 = esp_circuit
-circuitY1 = 90      # ordonnée du premier coin du circuit (=hauteur du début du rectangle)
+circuitY1 = f7      # ordonnée du premier coin du circuit (=hauteur du début du rectangle)
 circuitX2 = dim_fenetre - esp_circuit
 circuitY2 = dim_fenetre - esp_circuit
 
 
 # Joueur
-player_size = 8
-x_player = dim_fenetre // 2
+player_size = int(dico_variables["player_size"])
+x_player = demi_f
 y_player = dim_fenetre - esp_circuit
 direction = None
 dep = 5
-life_player = 3
-speed_player = 5
+life_player = int(dico_variables["life_player"])
+speed_player = int(dico_variables["speed_player"])
 
 x_player2 = dim_fenetre - esp_circuit
-y_player2 = dim_fenetre // 2
+y_player2 = demi_f
 direction2 = None
-speed_player2 = 5
-life_player2 = 3
+speed_player2 = speed_player
+life_player2 = life_player
 
 # Sparx
 sparx_size = player_size
-x1_sparx = dim_fenetre // 2     # abscisse du sparx 1
+x1_sparx = demi_f     # abscisse du sparx 1
 y1_sparx = circuitY1    # ordonnée du sparx 1
 dir_sparx1 = 'droite'
 x2_sparx = x1_sparx     # abscisse du sparx 2
@@ -47,12 +75,14 @@ dir_sparx2 = 'gauche'
 x3_sparx = circuitX1
 y3_sparx = circuitY1
 dir_sparx3 = dir_sparx1
+speed_sparx = int(dico_variables["speed_sparx"])
 
  
 # Qix
-x_qix = dim_fenetre // 2
+x_qix = demi_f
 y_qix = x_qix
-vitesse_qix = 1
+qix_size = int(dico_variables["qix_size"])
+vitesse_qix = float(dico_variables["vitesse_qix"])
 midle_qix = 30
 x_qix2=200
 y_qix2=200
@@ -79,7 +109,7 @@ duree_invincibilite = 3
 def ready():
     """Affiche le texte de départ"""
     texte(
-        dim_fenetre // 2, dim_fenetre // 3,
+        demi_f, f3,
         "Voici les commandes : \n \n\
             - Les flèches directionnelles pour se déplacer \n \n\
             - Presser la touche Enter puis rentrer \n\
@@ -89,11 +119,11 @@ def ready():
             - Escape pour quitter \n \n\
             (Appuyer sur une touche pour commencer \n\
             à jouer)", 
-        "white", "center", taille=18, tag='texte'
+        "white", "center", taille=size_write_menu-5, tag='texte'
     )
     texte(
-        dim_fenetre // 2, dim_fenetre // 1.2,
-        "Good luck !", "green", "center", taille=26, tag='texte'
+        demi_f, f1_2,
+        "Good luck !", "green", "center", taille=size_write_menu, tag='texte'
     )
     attend_ev()
     efface('texte')
@@ -101,7 +131,7 @@ def ready():
 def ready2():
     """Affiche le texte de départ"""
     texte(
-        dim_fenetre // 2, dim_fenetre // 3,
+        demi_f, f3,
         "Voici les commandes pour le joueur 1 : \n \n\
             - Les flèches directionnelles pour se déplacer \n \n\
             - Presser la touche Enter puis rentrer \n\
@@ -111,11 +141,11 @@ def ready2():
             - Escape pour quitter \n \n\
             (Appuyer sur une touche pour commencer \n\
             à jouer)", 
-        "white", "center", taille=18, tag='texte'
+        "white", "center", taille=size_write_menu-5, tag='texte'
     )
     texte(
-        dim_fenetre // 2, dim_fenetre // 1.2,
-        "Good luck !", "green", "center", taille=26, tag='texte'
+        demi_f, f1_2,
+        "Good luck !", "green", "center", taille=size_write_menu, tag='texte'
     )
     attend_ev()
     efface('texte')
@@ -123,35 +153,36 @@ def ready2():
 def ready3():
     """Affiche le texte de départ"""
     texte(
-        dim_fenetre // 2, dim_fenetre // 3,
+        demi_f, f3,
         "Voici les commandes pour le joueur 2 : \n \n\
             - ZQSD pour se déplacer \n \n\
             - Presser la touche F puis rentrer \n\
-            dans l'air (flèches) pour dessiner \n \n\
+            dans l'air (ZQSD) pour dessiner \n \n\
             - X pendant le dessin pour \n\
             accélerer \n \n\
             - Escape pour quitter \n \n\
             (Appuyer sur une touche pour commencer \n\
             à jouer)", 
-        "white", "center", taille=18, tag='texte'
+        "white", "center", taille=size_write_menu-5, tag='texte'
     )
     texte(
-        dim_fenetre // 2, dim_fenetre // 1.2,
-        "Good luck !", "green", "center", taille=26, tag='texte'
+        demi_f, f1_2,
+        "Good luck !", "green", "center", taille=size_write_menu, tag='texte'
     )
     attend_ev()
     efface('texte')
 
+
 def ecriture_menu():
     """Affiche les case du menu"""
-    texte(300, 100, "Qix Basique", "white", "center", tag='qix_basique')
-    rectangle(200, 50, 400, 150, "blue", tag='rectangle1')
+    texte(demi_f, f6, "Qix Basique", "white", "center", tag='qix_basique', taille=size_write_menu)
+    rectangle(f3, f12, f1_5, f6+f12, "blue", tag='rectangle1')
 
-    texte(300, 300, "Qix Difficile", "red", "center", tag='qix_difficile')
-    rectangle(200, 250, 400, 350, "blue", tag='rectangle1')
+    texte(demi_f, demi_f, "Qix Difficile", "red", "center", tag='qix_difficile', taille=size_write_menu)
+    rectangle(f3, f3+f12, f1_5, demi_f+f12, "blue", tag='rectangle1')
 
-    texte(300, 500, "Versus", "purple", "center", tag='versus')
-    rectangle(200, 450, 400,550, "blue", tag='rectangle1')
+    texte(demi_f, (dim_fenetre - f6), "Versus", "purple", "center", tag='versus', taille=size_write_menu)
+    rectangle(f3, f1_5+f12, f1_5, dim_fenetre - f12, "blue", tag='rectangle1')
 
 
 def menu():
@@ -160,7 +191,7 @@ def menu():
     valid = True
     while valid:
         clicx, clicy = attend_clic_gauche()
-        if clicx >= 200 and clicx <= 400 and clicy >= 50 and clicy <= 150:
+        if clicx >= f3 and clicx <= f1_5 and clicy >= f12 and clicy <= f6+f12:
             efface('rectangle1')
             efface('qix_basique')
             efface('qix_difficile')
@@ -168,7 +199,7 @@ def menu():
             choix_jeu = 'Basique'
             valid = False
         
-        elif clicx >= 200 and clicx <= 400 and clicy >= 250 and clicy <= 350:
+        elif clicx >= f3 and clicx <= f1_5 and clicy >= f3+f12 and clicy <= demi_f+f12:
             efface('rectangle1')
             efface('qix_basique')
             efface('qix_difficile')
@@ -176,7 +207,7 @@ def menu():
             choix_jeu = "Difficile"
             valid = False
 
-        elif clicx >= 200 and clicx <= 400 and clicy >= 450 and clicy <= 550:
+        elif clicx >= f3 and clicx <= f1_5 and clicy >= f1_5+f12 and clicy <= (dim_fenetre - f12):
             efface('rectangle1')
             efface('qix_basique')
             efface('qix_difficile')
@@ -210,52 +241,52 @@ def init_sparx():
 
 def init_qix():
     """Affiche le premier qix"""
-    image(x_qix,y_qix,'kong.png',largeur=60,hauteur=60,ancrage="center",tag='kong1')
+    image(x_qix,y_qix,'./Images/kong.png',largeur=qix_size,hauteur=qix_size,ancrage="center",tag='kong1')
 
 
 def init_qix2():
     """Affiche le qix numéro 2"""
-    image(x_qix2, y_qix2, 'kong.png',largeur=60,hauteur=60,ancrage="center",tag='kong2')
+    image(x_qix2, y_qix2, './Images/kong.png',largeur=qix_size,hauteur=qix_size,ancrage="center",tag='kong2')
 
 
 def init_life(life_player: int):
     """Affiche le nombre de vie"""
     chaine = str(life_player)
-    size_life = 17
-    texte(570, 10, chaine, 'yellow', taille=size_life, tag='life')
+    size_life = f35
+    texte(dim_fenetre-f30, f60, chaine, 'yellow', taille=size_life, tag='life')
 
 def init_life2(life_player2: int):
     """Affiche le nombre de vie"""
     chaine = str(life_player2)
-    size_life = 17
-    texte(175, 10, chaine, 'yellow', taille=size_life, tag='life2')
+    size_life = f35
+    texte(f4+f35, f60, chaine, 'yellow', taille=size_life, tag='life2')
 
 def init_text_life():
     """Affiche le texte `Vie restante`"""
     text_life = 'Vie Joueur 1:'
-    size__text_life = 17
-    texte(430, 10, text_life, 'red', taille=size__text_life, tag='text_life')
+    size__text_life = f35
+    texte(f1_5+f20, f60, text_life, 'red', taille=size__text_life, tag='text_life')
     init_life(life_player)
 
 def init_text_life2():
     """Affiche le texte `Vie restante`"""
     text_life = 'Vie Joueur 2 :'
-    size__text_life = 17
-    texte(30, 10, text_life, 'red', taille=size__text_life, tag='text_life')
+    size__text_life = f35
+    texte(f30, f60, text_life, 'red', taille=size__text_life, tag='text_life')
     init_life2(life_player2)
 
 def init_text_qix():
     """Affiche le texte `Qix`"""
     chaine = 'Qix'
-    size = 50
-    texte(300, 40, chaine, 'blue', taille=size, ancrage='center')
+    size = f12
+    texte(demi_f, f20+f60, chaine, 'blue', taille=size, ancrage='center')
 
 
 def init_text_invincible():
     """Affiche le texte `Invincible`"""
-    texte_invincible="Invincible"
-    size_invicible=17
-    texte(60,50,texte_invincible,'green',taille=size_invicible,ancrage='center',tag="Invincible")
+    texte_invincible = "Invincible"
+    size_invincible = dim_fenetre//35
+    texte(60,50,texte_invincible,'green',taille=size_invincible,ancrage='center',tag="Invincible")
 
 
 def init_pomme():
@@ -266,7 +297,7 @@ def init_pomme():
         x_pomme = randint(circuitX1 + 1, dim_fenetre-(circuitX1+1))
         y_pomme = randint(circuitY1 + 1, dim_fenetre-(circuitX1+1))
         tag_pomme = f'{nom}_{i}'
-        image(x_pomme, y_pomme, 'pomme.png', largeur=pomme_size, hauteur=pomme_size, ancrage='center', tag=tag_pomme)
+        image(x_pomme, y_pomme, './Images/pomme.png', largeur=pomme_size, hauteur=pomme_size, ancrage='center', tag=tag_pomme)
         pommes.append({'x': x_pomme, 'y': y_pomme, 'tag': tag_pomme})
 
 
@@ -291,8 +322,6 @@ def init_game(choix_jeu):
         if choix_jeu=="Difficile":
             init_qix2()
 
-        
-
 
 def main():
     """Permet de lancer le début du jeu"""
@@ -309,7 +338,8 @@ def init_obstacle(x: int, y: int, num_obstacle: int):
 
 def init_gameover():
     """Fonction de fin de jeu s'il est perdu"""
-    efface('kong')
+    efface('kong1')
+    efface('kong2')
     efface('sparx1')
     efface('sparx2')
     efface('player')
@@ -325,10 +355,10 @@ def init_joueur1perdu():
     efface('sparx2')
     efface('player')
     efface('player2')
-    chaine = 'JOUEUR 1 A PERDU'
-    size = 40
+    chaine = 'Joueur 1 a perdu'
+    size = f12
     police ="Stencil"
-    texte(300, 300, chaine, 'red', 'center', police, size, 'Joueur1Perdu')
+    texte(demi_f, demi_f, chaine, 'red', 'center', police, size, 'Joueur1Perdu')
 
 def init_joueur2perdu():
     """Fonction de fin de jeu s'il est perdu"""
@@ -337,10 +367,10 @@ def init_joueur2perdu():
     efface('sparx2')
     efface('player')
     efface('player2')
-    chaine = 'JOUEUR 2 A PERDU'
-    size = 40
+    chaine = 'Joueur 2 a perdu'
+    size = f12
     police ="Stencil"
-    texte(300, 300, chaine, 'red', 'center', police, size, 'Joueur2Perdu')
+    texte(demi_f, demi_f, chaine, 'red', 'center', police, size, 'Joueur2Perdu')
 
 ##### Fonctions du jeu #####
 
@@ -709,7 +739,7 @@ if __name__ == "__main__":
                 x_player2, y_player2 = dep_player2(direction2, x_player2, y_player2)
     
         #### Déplacement des sparx ####
-        if temps % 5 == 0 and (on_circuit_sparx(dir_sparx1, x1_sparx, y1_sparx, 1) or on_circuit_sparx(dir_sparx2, x2_sparx, y2_sparx, 2)):      # si les sparxs sont sur le circuit, les faires se déplacer
+        if temps % speed_sparx == 0 and (on_circuit_sparx(dir_sparx1, x1_sparx, y1_sparx, 1) or on_circuit_sparx(dir_sparx2, x2_sparx, y2_sparx, 2)):      # si les sparxs sont sur le circuit, les faires se déplacer
             
             dir_sparx1 = turn_sparx(dir_sparx1, x1_sparx, y1_sparx, 1)
             dir_sparx2 = turn_sparx(dir_sparx2, x2_sparx, y2_sparx, 2)
@@ -721,7 +751,7 @@ if __name__ == "__main__":
                 dir_sparx3 = turn_sparx(dir_sparx3, x3_sparx, y3_sparx, 3)
                 x3_sparx, y3_sparx = dep_sparx(dir_sparx3, x3_sparx, y3_sparx, 3)
             
-        elif temps % 5 == 0:
+        elif temps % speed_sparx == 0:
             x1_sparx, y1_sparx = dim_fenetre // 2, circuitY1
             x2_sparx, y2_sparx = x1_sparx, y1_sparx
             dir_sparx1 = 'droite'
@@ -885,7 +915,7 @@ if __name__ == "__main__":
             liste_osbtacles.append(spawn_obstacle())
             nb_obstacles += 1
 
-        if choix_jeu=="Basique" or choix_jeu=="Difficile":
+        if choix_jeu=="Basique"or choix_jeu=="Difficile":
             if life_player == 0:
                 init_gameover()
                 break
