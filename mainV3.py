@@ -98,7 +98,49 @@ def ready():
     attend_ev()
     efface('texte')
 
+def ready2():
+    """Affiche le texte de départ"""
+    texte(
+        dim_fenetre // 2, dim_fenetre // 3,
+        "Voici les commandes pour le joueur 1 : \n \n\
+            - Les flèches directionnelles pour se déplacer \n \n\
+            - Presser la touche Enter puis rentrer \n\
+            dans l'air (flèches) pour dessiner \n \n\
+            - Espace pendant le dessin pour \n\
+            accélerer \n \n\
+            - Escape pour quitter \n \n\
+            (Appuyer sur une touche pour commencer \n\
+            à jouer)", 
+        "white", "center", taille=18, tag='texte'
+    )
+    texte(
+        dim_fenetre // 2, dim_fenetre // 1.2,
+        "Good luck !", "green", "center", taille=26, tag='texte'
+    )
+    attend_ev()
+    efface('texte')
 
+def ready3():
+    """Affiche le texte de départ"""
+    texte(
+        dim_fenetre // 2, dim_fenetre // 3,
+        "Voici les commandes pour le joueur 2 : \n \n\
+            - ZQSD pour se déplacer \n \n\
+            - Presser la touche F puis rentrer \n\
+            dans l'air (flèches) pour dessiner \n \n\
+            - X pendant le dessin pour \n\
+            accélerer \n \n\
+            - Escape pour quitter \n \n\
+            (Appuyer sur une touche pour commencer \n\
+            à jouer)", 
+        "white", "center", taille=18, tag='texte'
+    )
+    texte(
+        dim_fenetre // 2, dim_fenetre // 1.2,
+        "Good luck !", "green", "center", taille=26, tag='texte'
+    )
+    attend_ev()
+    efface('texte')
 def ecriture_menu():
     """Affiche les case du menu"""
     texte(300, 100, "Qix Basique", "white", "center", tag='qix_basique')
@@ -630,7 +672,11 @@ def spawn_obstacle():
 
 if __name__ == "__main__":
     choix_jeu = main()
-    ready()
+    if choix_jeu=="Basique" or choix_jeu=="Difficile":
+        ready()
+    if choix_jeu=="Versus":
+        ready2()
+        ready3()
     init_game(choix_jeu)
 
     liste_points = segments_initiaux()      # liste des segments du circuit
@@ -825,7 +871,7 @@ if __name__ == "__main__":
                     reset()
                     efface('life')
                     init_life(life_player)
-                    
+
             elif collision_obstacles(liste_osbtacles, x_player, y_player):
                 direction = None
 
