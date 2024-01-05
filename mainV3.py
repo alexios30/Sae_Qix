@@ -141,6 +141,7 @@ def ready3():
     )
     attend_ev()
     efface('texte')
+
 def ecriture_menu():
     """Affiche les case du menu"""
     texte(300, 100, "Qix Basique", "white", "center", tag='qix_basique')
@@ -319,25 +320,25 @@ def init_gameover():
 
 def init_joueur1perdu():
     """Fonction de fin de jeu s'il est perdu"""
-    efface('kong')
+    efface('kong1')
     efface('sparx1')
     efface('sparx2')
     efface('player')
     efface('player2')
     chaine = 'JOUEUR 1 A PERDU'
-    size = 50
+    size = 40
     police ="Stencil"
     texte(300, 300, chaine, 'red', 'center', police, size, 'Joueur1Perdu')
 
 def init_joueur2perdu():
     """Fonction de fin de jeu s'il est perdu"""
-    efface('kong')
+    efface('kong1')
     efface('sparx1')
     efface('sparx2')
     efface('player')
     efface('player2')
     chaine = 'JOUEUR 2 A PERDU'
-    size = 50
+    size = 40
     police ="Stencil"
     texte(300, 300, chaine, 'red', 'center', police, size, 'Joueur2Perdu')
 
@@ -884,7 +885,7 @@ if __name__ == "__main__":
             liste_osbtacles.append(spawn_obstacle())
             nb_obstacles += 1
 
-        if choix_jeu=="Basique"or choix_jeu=="Difficile":
+        if choix_jeu=="Basique" or choix_jeu=="Difficile":
             if life_player == 0:
                 init_gameover()
                 break
