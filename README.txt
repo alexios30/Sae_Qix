@@ -13,7 +13,8 @@ Le code réalisé par Alexis :
     - le mode Difficile
    Update rendu 3:
     -Ajout du mode 2 joueur
-    -Ajustement du menu
+    -Ajustement du menu pour choisir le mode de Jeu
+
    
 
 Le code réalisé par Julien : 
