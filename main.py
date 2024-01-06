@@ -789,7 +789,7 @@ if __name__ == "__main__":
             x_qix, y_qix = dep_qix(x_qix, y_qix, 1)
             init_qix()
 
-        if choix_jeu == 'Difficile':
+        if choix_jeu == 'Difficile' and touche_pause == 0:
             x_qix2,y_qix2=dep_qix(x_qix2,y_qix2,2)
             init_qix2()
 
