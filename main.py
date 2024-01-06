@@ -289,6 +289,12 @@ def init_text_invincible():
     texte(60,50,texte_invincible,'green',taille=size_invincible,ancrage='center',tag="Invincible")
 
 
+def init_menu_pause():
+    """Affiche la case du menu pause"""
+    texte(dim_fenetre-f6, f10-(dim_fenetre//130), 'Pause (P)', "green", "center", tag='txt_pause', taille=f35)
+    rectangle(f1_5+f20, f10-f35, dim_fenetre-f30, f6-f20, "green", epaisseur=3, tag='rectangle_pause')
+
+
 def init_pomme():
     """Affiche les pommes"""
     global pommes 
@@ -314,6 +320,7 @@ def init_game(choix_jeu):
     init_text()
     init_sparx()
     init_qix()
+    init_menu_pause()
     if choix_jeu=="Versus":
         init_player2()
         init_text_life2()
@@ -410,6 +417,9 @@ def mise_a_jour_direction(direction: str, direction2:str):
             nouvelle_dir2= 'espace'
         elif t == "Escape":
             nouvelle_dir = 'echap'
+        if t=="p":
+            nouvelle_dir = "pause"
+            nouvelle_dir2 = "pause"
     return nouvelle_dir,nouvelle_dir2
 
 
@@ -713,6 +723,7 @@ if __name__ == "__main__":
     liste_points = segments_initiaux()      # liste des segments du circuit
     coords_poly = []        # liste des coordonnées du futur polygone à dessiner
     liste_osbtacles = []        # liste des coordonnées des osbtacles
+    touche_pause = 0
 
     temps = 0
     touche_entree = 0       # touche qui permet le dessin
@@ -732,14 +743,28 @@ if __name__ == "__main__":
             ferme_fenetre()
             break
         #### Déplacement du joueur ####
-        if temps % speed_player == 0 and touche_entree == 0 and on_circuit_player(x_player, y_player):     # si joueur sur circuit, le faire déplacer
+        if temps % speed_player == 0 and touche_entree == 0 and on_circuit_player(x_player, y_player) and touche_pause == 0:     # si joueur sur circuit, le faire déplacer
             x_player, y_player = dep_player(direction, x_player, y_player)
         if choix_jeu=="Versus":
-            if temps % speed_player2 == 0 and touche_entree2 == 0 and on_circuit_player2(x_player2, y_player2):     # si joueur sur circuit, le faire déplacer
+            if temps % speed_player2 == 0 and touche_entree2 == 0 and on_circuit_player2(x_player2, y_player2) and touche_pause == 0:     # si joueur sur circuit, le faire déplacer
                 x_player2, y_player2 = dep_player2(direction2, x_player2, y_player2)
+
+        if direction == 'pause' and touche_pause == 0:
+            efface('txt_pause')
+            efface('rectangle_pause')
+            texte(demi_f, demi_f, 'Pause (P)', "orange", "center", tag='txt_pause', taille=f10)
+            rectangle(f1_5+f20, f10-f35, dim_fenetre-f30, f6-f20, "orange", epaisseur=3, tag='rectangle_pause')
+            touche_pause = 1
+            direction = None
+        elif direction == 'pause' and touche_pause == 1:
+            efface('txt_pause')
+            init_menu_pause()
+            touche_pause = 0
+            direction = None
+            
     
         #### Déplacement des sparx ####
-        if temps % speed_sparx == 0 and (on_circuit_sparx(dir_sparx1, x1_sparx, y1_sparx, 1) or on_circuit_sparx(dir_sparx2, x2_sparx, y2_sparx, 2)):      # si les sparxs sont sur le circuit, les faires se déplacer
+        if temps % speed_sparx == 0 and (on_circuit_sparx(dir_sparx1, x1_sparx, y1_sparx, 1) or on_circuit_sparx(dir_sparx2, x2_sparx, y2_sparx, 2)) and touche_pause == 0:      # si les sparxs sont sur le circuit, les faires se déplacer
             
             dir_sparx1 = turn_sparx(dir_sparx1, x1_sparx, y1_sparx, 1)
             dir_sparx2 = turn_sparx(dir_sparx2, x2_sparx, y2_sparx, 2)
@@ -751,7 +776,7 @@ if __name__ == "__main__":
                 dir_sparx3 = turn_sparx(dir_sparx3, x3_sparx, y3_sparx, 3)
                 x3_sparx, y3_sparx = dep_sparx(dir_sparx3, x3_sparx, y3_sparx, 3)
             
-        elif temps % speed_sparx == 0:
+        elif temps % speed_sparx == 0 and touche_pause == 0:
             x1_sparx, y1_sparx = dim_fenetre // 2, circuitY1
             x2_sparx, y2_sparx = x1_sparx, y1_sparx
             dir_sparx1 = 'droite'
@@ -760,8 +785,9 @@ if __name__ == "__main__":
 
 
         #### Déplacement du qix ####
-        x_qix, y_qix = dep_qix(x_qix, y_qix, 1)
-        init_qix()
+        if touche_pause == 0:
+            x_qix, y_qix = dep_qix(x_qix, y_qix, 1)
+            init_qix()
 
         if choix_jeu == 'Difficile':
             x_qix2,y_qix2=dep_qix(x_qix2,y_qix2,2)
