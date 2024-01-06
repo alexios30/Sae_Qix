@@ -12,10 +12,8 @@ Le code réalisé par Alexis :
     - le menu et ses fonctionnalités
     - le mode Difficile
    Update rendu 3:
-    -Ajout du mode 2 joueur
-    -Ajustement du menu pour choisir le mode de Jeu
-
-   
+    - Ajout du mode 2 joueur
+    - Ajustement du menu pour choisir le mode de Jeu (basique/difficile/2 joueurs)
 
 Le code réalisé par Julien : 
 
@@ -30,8 +28,8 @@ Le code réalisé par Julien :
     - les obstacles 
     - la vitesse du joueur lors du dessin
     Update rendu 3:
-     -Fait la sauvegardes des paramètres dans un fichier txt
-     -Fait la fonction pause
+    - la sauvegarde des paramètres dans un fichier.txt
+    - la fonction pause qui stop le jeu 
 
 II. Les choix techniques
 
@@ -54,6 +52,9 @@ Update rendu 2:
 Après ce premier rendu, nous avons réalisé une remise à zéro du code et se basant sur la création du liste de coordonnées dont le joueur avait le droit d'y accéder. Cependant cette liste devenait rapidement longue et difficile de manipulation.
 Nous avons donc effectuer une troisième reprise à zéro du programme, en créant des fonctions courtes et concises et reprenant la manipulation de segments.
 
+Update rendu 3:
+
+Plusieurs fonctions du jeu n'ont pas pu être implémenter par manque d'idées dans la manière de manipuler et d'amener le code. Beaucoup de tests on été réalisés mais le résultat final n'étant pas été concluant, nous avons décidé de mettre de côté ces étapes.
 
 IV. Les bonus / Variantes
 
@@ -71,10 +72,10 @@ Update rendu 2:
 - Niveaux : Nous avons choisis d'instaurer un menu de démarrage par lequel l'utilisateur va pouvoir déterminer le niveau au lancement du jeux : seuls les rectangles sont cliquables, sinon la boucle while ne permettra pas de lancer le jeu tant qu'un clic n'est pas effectué dans un de ces derniers. Soit le jeu basique, qui est le jeu simple, soit difficile, qui rajoute au jeu un deuxième Qix et un troisème sparx sur le circuit. L'optimisation de ces rajouts reste encore à travailler, mais chaque fonction créer peut être utiliser pour n'importe quel enemi tant que le numéro y est attribué.
 
 Update rendu 3:
-- 2 joueurs: Nous avons donc reussi à inserer les 2 joueurs en changeant pas mal de nos ancienne fonction pour qu'elle puisse prendre en paramètre un 2 eme joueur.Pour ce qui les collisions , nous avons réutilisé nos anciennes fonctions de collision sur le 2 eme joueur et pour la collision entre les joueurs, nous avons aussi réutilisé la fonction de collision des sparxs.On a eu aussi besoin de modifier le menu pour accueillir ce nouveau mode et bien séparé les différents mode de jeu.
+- 2 joueurs : Amélioration et adaptation du code pour implémenter un deuxième joueur dans le jeu. Pour ce faire, nous avons codé le comportement, les actions et les obstacles du premier joueur sur le deuxième. Ainsi, les 2 joueurs profitent des mêmes conditions ormis les touches pour jouer.
+- Menu pause : Suivant la touche pressée, le jeu se met en pause et stop les joueurs comme les adversaires.
 
 V.Variante
 
 Pour commencer, nous avons commencer par la variante sparx interne car nous avons refait le déplacement des sparxs.Pour effectuer ceci, nous avons donc décidé que les sparxs puisse vérifier à chaque déplacement si ils peuvent faire haut,bas,droite, gauche et que si il y a un polygone déssiné, ils  puissent le choisir comme direction.Après, nous avons récupéré la variante d'obstacle fait dans la précédente version.Nous avons décidé après de faire la variante pomme, elle fonctionne comme cela: si les coordonnées de la pomme sont les mêmes que celle du joueur, la pomme est supprimée et le mode invincible est activé.Comment marche le mode invincible? Une fois la pomme mangé, un décompte commence, puis dans la boucle, nous entrons dans le if de invicible ce qui nous empêche d'entrer dans le if des collisions avec les différents énnemis.Le décompte est donc à chaque fois vérifié et si le décompte est superieurà 3 secondes, le invicible devient false et on vérifie donc à chaque fois les collision.Nous avons fait après la variantes vitesse, ce qui permet donc d'accélérer et de colorier le polygone d'une différente couleur.Pour la variante d'un nouveau mode de difficulté, nous avons eu comme idée de lancer un menu qui nous propose soit le mode de jeu basique, soit le mode de jeu difficile où il y aura donc 2 qix et 3 sparx.Nous avons donc récupérer les coordonées du clic gauche et voir si sa position était entre les réctangles de qix basique et du qix difficile, puis en fonction du mode choisie, lancé le jeux avec un ou deux qix et 2 ou 3 sparx.
-
 
