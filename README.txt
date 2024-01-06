@@ -29,6 +29,9 @@ Le code réalisé par Julien :
     - déplacement interne des sparx sur le circuit
     - les obstacles 
     - la vitesse du joueur lors du dessin
+    Update rendu 3:
+     -Fait la sauvegardes des paramètres dans un fichier txt
+     -Fait la fonction pause
 
 II. Les choix techniques
 
@@ -51,6 +54,7 @@ Update rendu 2:
 Après ce premier rendu, nous avons réalisé une remise à zéro du code et se basant sur la création du liste de coordonnées dont le joueur avait le droit d'y accéder. Cependant cette liste devenait rapidement longue et difficile de manipulation.
 Nous avons donc effectuer une troisième reprise à zéro du programme, en créant des fonctions courtes et concises et reprenant la manipulation de segments.
 
+
 IV. Les bonus / Variantes
 
 Nous avons essayé de trouver, sans succès, la condition qui permettait de faire tester les déplacements des sparx dans les direction perpendiculaire à celle actuelle et ainsi donner la possibilité aux sparx de circuler sur les polygones dessinés par le joueur.
@@ -66,6 +70,8 @@ Update rendu 2:
 - Sparx "internes" : La condition de test des sparx a été trouvé, ce qui nous a permit d'implémenter le bonus de sparx interne. il s'agit, dans l'ordre, de lister les directions de chaque sparx en excluant le demi-tour, de tester chacune pour savoir s'il se trouvera encore sur le circuit, et dans ce cas lister ces directions possibles puis en faire un tirage aléatoire (choice).
 - Niveaux : Nous avons choisis d'instaurer un menu de démarrage par lequel l'utilisateur va pouvoir déterminer le niveau au lancement du jeux : seuls les rectangles sont cliquables, sinon la boucle while ne permettra pas de lancer le jeu tant qu'un clic n'est pas effectué dans un de ces derniers. Soit le jeu basique, qui est le jeu simple, soit difficile, qui rajoute au jeu un deuxième Qix et un troisème sparx sur le circuit. L'optimisation de ces rajouts reste encore à travailler, mais chaque fonction créer peut être utiliser pour n'importe quel enemi tant que le numéro y est attribué.
 
+Update rendu 3:
+- 2 joueurs: Nous avons donc reussi à inserer les 2 joueurs en changeant pas mal de nos ancienne fonction pour qu'elle puisse prendre en paramètre un 2 eme joueur.Pour ce qui les collisions , nous avons réutilisé nos anciennes fonctions de collision sur le 2 eme joueur et pour la collision entre les joueurs, nous avons aussi réutilisé la fonction de collision des sparxs.On a eu aussi besoin de modifier le menu pour accueillir ce nouveau mode et bien séparé les différents mode de jeu.
 
 V.Variante
 
