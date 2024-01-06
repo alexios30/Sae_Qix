@@ -11,6 +11,10 @@ Le code réalisé par Alexis :
     - la fonction qui réintisalise tout (reset) reprise à zéro
     - le menu et ses fonctionnalités
     - le mode Difficile
+   Update rendu 3:
+    -Ajout du mode 2 joueur
+    -Ajustement du menu
+   
 
 Le code réalisé par Julien : 
 
