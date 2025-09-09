@@ -241,12 +241,12 @@ def init_sparx():
 
 def init_qix():
     """Affiche le premier qix"""
-    image(x_qix,y_qix,'./Images/kong.png',largeur=qix_size,hauteur=qix_size,ancrage="center",tag='kong1')
+    image(x_qix,y_qix,'.//kong.png',largeur=qix_size,hauteur=qix_size,ancrage="center",tag='kong1')
 
 
 def init_qix2():
     """Affiche le qix numéro 2"""
-    image(x_qix2, y_qix2, './Images/kong.png',largeur=qix_size,hauteur=qix_size,ancrage="center",tag='kong2')
+    image(x_qix2, y_qix2, './images/kong.png',largeur=qix_size,hauteur=qix_size,ancrage="center",tag='kong2')
 
 
 def init_life(life_player: int):
@@ -303,7 +303,7 @@ def init_pomme():
         x_pomme = randint(circuitX1 + 1, dim_fenetre-(circuitX1+1))
         y_pomme = randint(circuitY1 + 1, dim_fenetre-(circuitX1+1))
         tag_pomme = f'{nom}_{i}'
-        image(x_pomme, y_pomme, './Images/pomme.png', largeur=pomme_size, hauteur=pomme_size, ancrage='center', tag=tag_pomme)
+        image(x_pomme, y_pomme, './images/pomme.png', largeur=pomme_size, hauteur=pomme_size, ancrage='center', tag=tag_pomme)
         pommes.append({'x': x_pomme, 'y': y_pomme, 'tag': tag_pomme})
 
 
